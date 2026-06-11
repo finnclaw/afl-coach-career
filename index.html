@@ -119,8 +119,8 @@
             letter-spacing: 1px;
         }
         .player-dot {
-            width: 90px;
-            height: 70px;
+            width: 110px;
+            height: 80px;
             background: rgba(0,0,0,0.7);
             border-radius: 8px;
             display: flex;
@@ -137,7 +137,8 @@
         .player-dot:hover { transform: scale(1.1); border-color: #4ecdc4; }
         .player-dot.clickable { cursor: pointer; }
         .player-dot.selected { border-color: #f39c12; background: rgba(243,156,18,0.3); }
-        .player-dot .name { font-weight: 600; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+        .player-dot .name { font-weight: 600; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+        .player-dot .team-label { font-size: 0.7em; color: #4ecdc4; margin-top: 1px; }
         .player-dot .rating { font-size: 1.1em; font-weight: bold; margin-top: 2px; }
         .player-dot .rating.elite { color: #f1c40f; }
         .player-dot .rating.star { color: #4ecdc4; }
@@ -256,8 +257,8 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .player-dot { width: 70px; height: 55px; font-size: 0.65em; }
-            .player-dot .name { max-width: 60px; }
+            .player-dot { width: 85px; height: 65px; font-size: 0.6em; }
+            .player-dot .name { max-width: 75px; font-size: 0.75em; }
         }
     </style>
 </head>
@@ -538,8 +539,7 @@
             { name: 'Barry Hall', pos: 'FF', era: '2000s', rating: 92, team: 'Sydney' },
             { name: 'Brendan Fevola', pos: 'FF', era: '2000s', rating: 91, team: 'Carlton' },
             { name: 'Fraser Gehrig', pos: 'FF', era: '2000s', rating: 89, team: 'St Kilda' },
-            { name: 'Lloyd', pos: 'FF', era: '1990s', rating: 88, team: 'Adelaide' },
-            { name: 'Lockett', pos: 'FF', era: '1980s', rating: 97, team: 'St Kilda' },
+            { name: 'Tony Modra', pos: 'FF', era: '1990s', rating: 92, team: 'Adelaide' },
             { name: 'Dermott Brereton', pos: 'HF', era: '1980s', rating: 91, team: 'Hawthorn' },
             { name: 'Gary Ayres', pos: 'HF', era: '1980s', rating: 90, team: 'Hawthorn' },
             { name: 'Cyril Rioli', pos: 'HF', era: '2010s', rating: 92, team: 'Hawthorn' },
@@ -554,7 +554,7 @@
             { name: 'Jamarra Ugle-Hagan', pos: 'FF', era: '2020s', rating: 86, team: 'Bulldogs' },
             { name: 'Mabior Chol', pos: 'FF', era: '2020s', rating: 84, team: 'Gold Coast' },
             { name: 'Cameron Zurhaar', pos: 'HF', era: '2020s', rating: 87, team: 'North Melbourne' },
-            { name: 'Small', pos: 'HF', era: '2020s', rating: 86, team: 'GWS' },
+            { name: 'Toby Greene', pos: 'HF', era: '2020s', rating: 91, team: 'GWS' },
             { name: 'Daniel Rioli', pos: 'HF', era: '2020s', rating: 88, team: 'Gold Coast' },
             { name: 'Shai Bolton', pos: 'HF', era: '2020s', rating: 91, team: 'Fremantle' },
             { name: 'Bobby Hill', pos: 'HF', era: '2020s', rating: 88, team: 'Collingwood' },
@@ -755,9 +755,9 @@
         function createPlayerDot(player, clickable = false) {
             return `
                 <div class="player-dot ${clickable ? 'clickable' : ''}" data-player-id="${player.id}">
-                    <div class="name">${player.name.split(' ').pop()}</div>
+                    <div class="name">${player.name}</div>
+                    <div class="team-label">${player.team}</div>
                     <div class="rating ${getRatingClass(player.rating)}">${player.rating}</div>
-                    <div class="era">${player.era}</div>
                 </div>
             `;
         }
