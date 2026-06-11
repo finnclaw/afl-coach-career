@@ -881,28 +881,30 @@
         }
 
         function setupSeasonSwap() {
-            const fieldContainer = document.querySelector('#screen-season .field-container');
-            const benchRow = document.getElementById('bench-row');
             const swapInfo = document.getElementById('season-swap-info');
 
-            const handleSwapClick = (e) => {
-                const dot = e.target.closest('.player-dot');
-                if (!dot) return;
+            // Attach click handler directly to each player dot
+            document.querySelectorAll('#screen-season .player-dot').forEach(dot => {
+                dot.onclick = (e) => {
+                    e.stopPropagation();
 
-                const playerId = dot.dataset.playerId;
-                const player = gameState.roster.find(p => p.id === playerId);
-                if (!player) return;
+                    const playerId = dot.dataset.playerId;
+                    const player = gameState.roster.find(p => p.id === playerId);
+                    if (!player) return;
 
-                if (!gameState.selectedSwapPlayer) {
-                    gameState.selectedSwapPlayer = player;
-                    dot.classList.add('swap-selected');
-                    swapInfo.innerHTML = `Selected <strong>${player.name}</strong>. Click another player to swap positions.`;
-                } else {
-                    if (gameState.selectedSwapPlayer.id === playerId) {
+                    if (!gameState.selectedSwapPlayer) {
+                        // First selection
+                        gameState.selectedSwapPlayer = player;
+                        document.querySelectorAll('#screen-season .player-dot').forEach(d => d.classList.remove('swap-selected'));
+                        dot.classList.add('swap-selected');
+                        swapInfo.innerHTML = `Selected <strong>${player.name}</strong>. Click another player to swap positions.`;
+                    } else if (gameState.selectedSwapPlayer.id === playerId) {
+                        // Clicked same player - deselect
                         gameState.selectedSwapPlayer = null;
                         dot.classList.remove('swap-selected');
                         swapInfo.innerHTML = 'Click a player to select, then click another to swap positions';
                     } else {
+                        // Swap positions
                         const tempLine = gameState.selectedSwapPlayer.line;
                         gameState.selectedSwapPlayer.line = player.line;
                         player.line = tempLine;
@@ -914,11 +916,8 @@
                         setupSeasonSwap();
                         document.getElementById('team-rating').textContent = getTeamRating();
                     }
-                }
-            };
-
-            fieldContainer.onclick = handleSwapClick;
-            benchRow.onclick = handleSwapClick;
+                };
+            });
         }
 
         function startSeason() {
