@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFL Coach Career</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+
+        /* Team Selection */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .team-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .team-card:hover { transform: translateY(-3px); border-color: #4ecdc4; }
+        .team-card.selected { border-color: #f39c12; background: rgba(243,156,18,0.2); }
+        .team-emoji { font-size: 2.5em; margin-bottom: 10px; }
+        .team-name { font-weight: 600; }
+        .team-rating { color: #4ecdc4; font-size: 0.9em; margin-top: 5px; }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%);
+            border: none;
+            color: #fff;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 0.9em;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        /* Game Screen */
+        .hidden { display: none !important; }
+        .screen { animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Season Display */
+        .season-header {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .season-num { font-size: 3em; color: #f39c12; }
+        .team-badge { font-size: 4em; margin: 10px 0; }
+
+        /* Roster */
+        .roster-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .roster-section h3 { margin-bottom: 15px; color: #4ecdc4; }
+        .player-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .player-card {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .player-card.recruit { border: 2px dashed #4ecdc4; }
+        .player-card.selected-swap { border: 2px solid #e74c3c; background: rgba(231,76,60,0.2); }
+        .player-name { font-weight: 500; }
+        .player-rating {
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+        .player-rating.high { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .player-rating.low { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+
+        /* Results */
+        .result-display {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .result-display h2 { font-size: 2.5em; margin-bottom: 10px; }
+        .result-display.premiers { background: linear-gradient(135deg, rgba(241,196,15,0.3), rgba(243,156,18,0.3)); }
+        .result-display.finals { background: linear-gradient(135deg, rgba(52,152,219,0.3), rgba(41,128,185,0.3)); }
+
+        /* Coaching Offers */
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .offer-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .offer-card:hover { transform: translateY(-3px); border-color: #f39c12; }
+        .offer-card .team-emoji { font-size: 3em; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value { font-size: 2.5em; color: #f39c12; }
+        .stat-label { color: #888; font-size: 0.9em; }
+
+        /* Career History */
+        .history-list {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-item.premiership { color: #f1c40f; }
+
+        /* Swap Interface */
+        .swap-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .swap-arrow {
+            font-size: 3em;
+            color: #4ecdc4;
+            align-self: center;
+            margin-top: 50px;
+        }
+        .swap-panel h3 { margin-bottom: 15px; text-align: center; }
+        .player-card.clickable { cursor: pointer; transition: all 0.2s; }
+        .player-card.clickable:hover { background: rgba(255,255,255,0.2); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .swap-container { grid-template-columns: 1fr; }
+            .swap-arrow { transform: rotate(90deg); justify-self: center; margin: 20px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Title Screen -->
+        <div id="screen-title" class="screen">
+            <h1>🏈 AFL Coach Career</h1>
+            <p class="subtitle">20 seasons. One legacy. Choose your club.</p>
+
+            <div class="team-grid" id="team-grid"></div>
+
+            <button class="btn" id="btn-start" disabled>Start Career</button>
+        </div>
+
+        <!-- Season Screen -->
+        <div id="screen-season" class="screen hidden">
+            <div class="season-header">
+                <div class="season-num">Season <span id="season-num">1</span></div>
+                <div class="team-badge" id="current-team-badge">🦅</div>
+                <div id="current-team-name">West Coast Eagles</div>
+                <div class="team-rating">Team Rating: <span id="team-rating">75</span></div>
+            </div>
+
+            <div class="roster-section">
+                <h3>Your Squad</h3>
+                <div class="player-list" id="roster-display"></div>
+            </div>
+
+            <button class="btn" id="btn-sim">Simulate Season</button>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="screen hidden">
+            <div class="result-display" id="result-display">
+                <h2 id="result-title">Premiers!</h2>
+                <p id="result-desc">Your team dominated the competition</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-wins">18</div>
+                    <div class="stat-label">Wins</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-losses">4</div>
+                    <div class="stat-label">Losses</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-ladder">1st</div>
+                    <div class="stat-label">Ladder</div>
+                </div>
+            </div>
+
+            <button class="btn" id="btn-offseason">Off-Season</button>
+        </div>
+
+        <!-- Off-Season Screen -->
+        <div id="screen-offseason" class="screen hidden">
+            <h2 style="text-align: center; margin-bottom: 20px;">Off-Season Recruiting</h2>
+            <p style="text-align: center; color: #888; margin-bottom: 30px;">
+                5 players want to join your club. Click a recruit, then click one of your players to swap them.
+            </p>
+
+            <div class="swap-container">
+                <div class="swap-panel">
+                    <h3>🆕 Available Recruits</h3>
+                    <div class="player-list" id="recruits-display"></div>
+                </div>
+                <div class="swap-arrow">⇄</div>
+                <div class="swap-panel">
+                    <h3>📋 Your Squad</h3>
+                    <div class="player-list" id="squad-swap-display"></div>
+                </div>
+            </div>
+
+            <div id="swap-info" style="text-align: center; margin: 20px 0; color: #4ecdc4; min-height: 30px;"></div>
+
+            <button class="btn" id="btn-continue">Continue to Next Season</button>
+        </div>
+
+        <!-- Coaching Offers Screen -->
+        <div id="screen-offers" class="screen hidden">
+            <h2 style="text-align: center; margin-bottom: 10px;">🎉 Coaching Offers!</h2>
+            <p style="text-align: center; color: #888; margin-bottom: 30px;">
+                Your success has attracted attention from other clubs.
+            </p>
+
+            <div class="offers-grid" id="offers-grid"></div>
+
+            <button class="btn btn-secondary" id="btn-stay">Stay with Current Club</button>
+        </div>
+
+        <!-- Career End Screen -->
+        <div id="screen-end" class="screen hidden">
+            <h1 style="text-align: center; margin-bottom: 20px;">🏆 Career Complete</h1>
+
+            <div class="stats-grid" id="career-stats"></div>
+
+            <div class="roster-section">
+                <h3>Career History</h3>
+                <div class="history-list" id="career-history"></div>
+            </div>
+
+            <button class="btn" id="btn-restart">New Career</button>
+        </div>
+    </div>
+
+    <script>
+        // AFL Teams Data
+        const TEAMS = [
+            { id: 'ade', name: 'Adelaide Crows', emoji: '🐦', colors: ['#002b5c', '#ffd200'] },
+            { id: 'bri', name: 'Brisbane Lions', emoji: '🦁', colors: ['#a30046', '#0054a4'] },
+            { id: 'car', name: 'Carlton Blues', emoji: '💙', colors: ['#001e3c', '#fff'] },
+            { id: 'col', name: 'Collingwood Magpies', emoji: '🐧', colors: ['#000', '#fff'] },
+            { id: 'ess', name: 'Essendon Bombers', emoji: '✈️', colors: ['#cc2031', '#000'] },
+            { id: 'fre', name: 'Fremantle Dockers', emoji: '⚓', colors: ['#2a0d45', '#fff'] },
+            { id: 'gee', name: 'Geelong Cats', emoji: '🐱', colors: ['#001f3d', '#fff'] },
+            { id: 'gcs', name: 'Gold Coast Suns', emoji: '☀️', colors: ['#ff0000', '#ffd200'] },
+            { id: 'gws', name: 'GWS Giants', emoji: '🧡', colors: ['#f15a22', '#000'] },
+            { id: 'haw', name: 'Hawthorn Hawks', emoji: '🦅', colors: ['#4d2004', '#fbbf15'] },
+            { id: 'mel', name: 'Melbourne Demons', emoji: '😈', colors: ['#0f1131', '#cc2031'] },
+            { id: 'nme', name: 'North Melbourne', emoji: '🦘', colors: ['#003690', '#fff'] },
+            { id: 'por', name: 'Port Adelaide', emoji: '⚡', colors: ['#008aab', '#000'] },
+            { id: 'ric', name: 'Richmond Tigers', emoji: '🐯', colors: ['#ffd200', '#000'] },
+            { id: 'stk', name: 'St Kilda Saints', emoji: '⚪', colors: ['#ed1c24', '#000'] },
+            { id: 'syd', name: 'Sydney Swans', emoji: '🦢', colors: ['#ed171f', '#fff'] },
+            { id: 'wce', name: 'West Coast Eagles', emoji: '🦅', colors: ['#002b5c', '#f2a900'] },
+            { id: 'wbd', name: 'Western Bulldogs', emoji: '🐕', colors: ['#014896', '#c8102e'] }
+        ];
+
+        const POSITIONS = ['DEF', 'MID', 'RUC', 'FWD'];
+        const FIRST_NAMES = ['Jack', 'Tom', 'Josh', 'Liam', 'Noah', 'Will', 'Charlie', 'James', 'Max', 'Zac', 'Ben', 'Sam', 'Luke', 'Ryan', 'Dylan', 'Toby', 'Harry', 'Finn', 'Oscar', 'Archie', 'Bailey', 'Kai', 'Mason', 'Riley', 'Jake', 'Connor', 'Patrick', 'Daniel', 'Marcus', 'Nick', 'Clay', 'Travis', 'Scott', 'Matt', 'Chris', 'Aaron', 'Isaac', 'Jordan', 'Caleb', 'Jye'];
+        const LAST_NAMES = ['Smith', 'Brown', 'Wilson', 'Martin', 'Kelly', 'Clark', 'Taylor', 'Anderson', 'Thomas', 'Walker', 'White', 'Harris', 'Lewis', 'Robinson', 'Thompson', 'King', 'Wright', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Nelson', 'Mitchell', 'Campbell', 'Roberts', 'Turner', 'Collins', 'Stewart', 'Murphy', 'Cox', 'Kennedy', 'Hughes', 'Moore', 'Gray', 'Reid', 'Watson', 'Brooks', 'Ward', 'Ross'];
+
+        const RESULTS = [
+            { finish: 'Premiers', emoji: '🏆', minRating: 85, points: 100 },
+            { finish: 'Grand Final', emoji: '🥈', minRating: 80, points: 80 },
+            { finish: 'Preliminary Final', emoji: '🏅', minRating: 75, points: 60 },
+            { finish: 'Semi Final', emoji: '📈', minRating: 70, points: 40 },
+            { finish: 'Elimination Final', emoji: '🎯', minRating: 65, points: 25 },
+            { finish: 'Top 10', emoji: '📊', minRating: 55, points: 10 },
+            { finish: 'Bottom 8', emoji: '📉', minRating: 0, points: 0 }
+        ];
+
+        // Game State
+        let gameState = {
+            currentTeam: null,
+            season: 1,
+            roster: [],
+            recruits: [],
+            selectedRecruit: null,
+            careerHistory: [],
+            stats: { premierships: 0, finals: 0, teamsCoached: [] }
+        };
+
+        // Helper Functions
+        function generatePlayer(minRating = 50, maxRating = 95) {
+            const rating = Math.floor(Math.random() * (maxRating - minRating + 1)) + minRating;
+            const age = Math.floor(Math.random() * 15) + 18;
+            return {
+                id: Math.random().toString(36).substr(2, 9),
+                name: `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`,
+                position: POSITIONS[Math.floor(Math.random() * POSITIONS.length)],
+                rating: rating,
+                age: age
+            };
+        }
+
+        function generateRoster() {
+            const roster = [];
+            // Generate 22 players with varying ratings
+            for (let i = 0; i < 22; i++) {
+                let minR = 55, maxR = 85;
+                if (i < 5) { minR = 75; maxR = 95; } // Top 5 players
+                else if (i < 12) { minR = 65; maxR = 85; } // Mid tier
+                roster.push(generatePlayer(minR, maxR));
+            }
+            return roster;
+        }
+
+        function generateRecruits() {
+            const recruits = [];
+            for (let i = 0; i < 5; i++) {
+                // Recruits have wider range - could be stars or busts
+                recruits.push(generatePlayer(45, 92));
+            }
+            return recruits;
+        }
+
+        function getTeamRating() {
+            if (!gameState.roster.length) return 0;
+            const total = gameState.roster.reduce((sum, p) => sum + p.rating, 0);
+            return Math.round(total / gameState.roster.length);
+        }
+
+        function getRatingClass(rating) {
+            if (rating >= 80) return 'high';
+            if (rating < 60) return 'low';
+            return '';
+        }
+
+        function simulateSeason() {
+            const teamRating = getTeamRating();
+            const luck = (Math.random() - 0.5) * 20; // -10 to +10 luck factor
+            const effectiveRating = teamRating + luck;
+
+            // Determine finish based on rating
+            let result = RESULTS[RESULTS.length - 1];
+            for (const r of RESULTS) {
+                if (effectiveRating >= r.minRating) {
+                    result = r;
+                    break;
+                }
+            }
+
+            // Calculate wins/losses (22 game season)
+            const winRate = Math.min(0.95, Math.max(0.1, (effectiveRating - 40) / 60));
+            const wins = Math.round(22 * winRate);
+            const losses = 22 - wins;
+
+            // Ladder position based on rating
+            let ladder;
+            if (effectiveRating >= 85) ladder = Math.floor(Math.random() * 2) + 1;
+            else if (effectiveRating >= 75) ladder = Math.floor(Math.random() * 4) + 1;
+            else if (effectiveRating >= 65) ladder = Math.floor(Math.random() * 4) + 5;
+            else if (effectiveRating >= 55) ladder = Math.floor(Math.random() * 4) + 9;
+            else ladder = Math.floor(Math.random() * 5) + 13;
+
+            return { ...result, wins, losses, ladder };
+        }
+
+        function shouldGetOffers(result) {
+            // Get offers if made finals and random chance
+            return result.points >= 25 && Math.random() > 0.4;
+        }
+
+        function generateOffers() {
+            const offers = [];
+            const numOffers = Math.floor(Math.random() * 2) + 1;
+            const availableTeams = TEAMS.filter(t => t.id !== gameState.currentTeam.id);
+
+            for (let i = 0; i < numOffers; i++) {
+                const randomTeam = availableTeams.splice(Math.floor(Math.random() * availableTeams.length), 1)[0];
+                offers.push({
+                    team: randomTeam,
+                    roster: generateRoster()
+                });
+            }
+            return offers;
+        }
+
+        function ageRoster() {
+            gameState.roster.forEach(p => {
+                p.age++;
+                // Decline if over 30, random decline chance increases with age
+                if (p.age > 30) {
+                    const declineChance = (p.age - 30) * 0.15;
+                    if (Math.random() < declineChance) {
+                        p.rating = Math.max(40, p.rating - Math.floor(Math.random() * 8 + 3));
+                    }
+                }
+                // Young players can improve
+                else if (p.age < 25 && Math.random() < 0.3) {
+                    p.rating = Math.min(98, p.rating + Math.floor(Math.random() * 5 + 1));
+                }
+            });
+        }
+
+        // UI Functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function renderTeamSelection() {
+            const grid = document.getElementById('team-grid');
+            grid.innerHTML = TEAMS.map(team => `
+                <div class="team-card" data-team-id="${team.id}">
+                    <div class="team-emoji">${team.emoji}</div>
+                    <div class="team-name">${team.name}</div>
+                </div>
+            `).join('');
+
+            grid.addEventListener('click', (e) => {
+                const card = e.target.closest('.team-card');
+                if (!card) return;
+
+                document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
+                const teamId = card.dataset.teamId;
+                gameState.currentTeam = TEAMS.find(t => t.id === teamId);
+                document.getElementById('btn-start').disabled = false;
+            });
+        }
+
+        function renderRoster(containerId, roster, clickable = false, onClick = null) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = roster.map(p => `
+                <div class="player-card ${clickable ? 'clickable' : ''}" data-player-id="${p.id}">
+                    <div>
+                        <div class="player-name">${p.name}</div>
+                        <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
+                    </div>
+                    <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
+                </div>
+            `).join('');
+
+            if (clickable && onClick) {
+                container.addEventListener('click', (e) => {
+                    const card = e.target.closest('.player-card');
+                    if (card) onClick(card.dataset.playerId);
+                });
+            }
+        }
+
+        function startSeason() {
+            document.getElementById('season-num').textContent = gameState.season;
+            document.getElementById('current-team-badge').textContent = gameState.currentTeam.emoji;
+            document.getElementById('current-team-name').textContent = gameState.currentTeam.name;
+            document.getElementById('team-rating').textContent = getTeamRating();
+            renderRoster('roster-display', gameState.roster);
+            showScreen('screen-season');
+        }
+
+        function showResult(result) {
+            const display = document.getElementById('result-display');
+            display.className = 'result-display';
+            if (result.finish === 'Premiers') display.classList.add('premiers');
+            else if (result.points >= 25) display.classList.add('finals');
+
+            document.getElementById('result-title').textContent = `${result.emoji} ${result.finish}!`;
+
+            const descriptions = {
+                'Premiers': 'Your team dominated and claimed the ultimate prize!',
+                'Grand Final': 'So close! Your team fell at the final hurdle.',
+                'Preliminary Final': 'A strong season ended one game short of the Grand Final.',
+                'Semi Final': 'Made the second week of finals - building momentum.',
+                'Elimination Final': 'Scraped into finals but couldn\'t go further.',
+                'Top 10': 'A middle-of-the-road season. Room to improve.',
+                'Bottom 8': 'A tough season. Time to rebuild.'
+            };
+            document.getElementById('result-desc').textContent = descriptions[result.finish];
+
+            document.getElementById('stat-wins').textContent = result.wins;
+            document.getElementById('stat-losses').textContent = result.losses;
+            document.getElementById('stat-ladder').textContent = result.ladder + (result.ladder === 1 ? 'st' : result.ladder === 2 ? 'nd' : result.ladder === 3 ? 'rd' : 'th');
+
+            // Update career history
+            gameState.careerHistory.push({
+                season: gameState.season,
+                team: gameState.currentTeam.name,
+                emoji: gameState.currentTeam.emoji,
+                finish: result.finish,
+                wins: result.wins,
+                losses: result.losses,
+                isPrem: result.finish === 'Premiers'
+            });
+
+            if (result.finish === 'Premiers') gameState.stats.premierships++;
+            if (result.points >= 25) gameState.stats.finals++;
+
+            showScreen('screen-result');
+
+            // Store result for later
+            gameState.lastResult = result;
+        }
+
+        function showOffseason() {
+            gameState.recruits = generateRecruits();
+            gameState.selectedRecruit = null;
+
+            const recruitsContainer = document.getElementById('recruits-display');
+            recruitsContainer.innerHTML = gameState.recruits.map(p => `
+                <div class="player-card recruit clickable" data-player-id="${p.id}">
+                    <div>
+                        <div class="player-name">${p.name}</div>
+                        <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
+                    </div>
+                    <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
+                </div>
+            `).join('');
+
+            recruitsContainer.onclick = (e) => {
+                const card = e.target.closest('.player-card');
+                if (!card) return;
+
+                document.querySelectorAll('#recruits-display .player-card').forEach(c => c.classList.remove('selected-swap'));
+                card.classList.add('selected-swap');
+
+                gameState.selectedRecruit = gameState.recruits.find(r => r.id === card.dataset.playerId);
+                document.getElementById('swap-info').textContent = `Selected ${gameState.selectedRecruit.name} (${gameState.selectedRecruit.rating}). Now click a player to swap out.`;
+            };
+
+            renderSquadForSwap();
+            showScreen('screen-offseason');
+        }
+
+        function renderSquadForSwap() {
+            const container = document.getElementById('squad-swap-display');
+            container.innerHTML = gameState.roster.map(p => `
+                <div class="player-card clickable" data-player-id="${p.id}">
+                    <div>
+                        <div class="player-name">${p.name}</div>
+                        <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
+                    </div>
+                    <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
+                </div>
+            `).join('');
+
+            container.onclick = (e) => {
+                const card = e.target.closest('.player-card');
+                if (!card || !gameState.selectedRecruit) return;
+
+                const playerOut = gameState.roster.find(p => p.id === card.dataset.playerId);
+                const playerIn = gameState.selectedRecruit;
+
+                // Perform swap
+                const idx = gameState.roster.findIndex(p => p.id === playerOut.id);
+                gameState.roster[idx] = playerIn;
+
+                // Remove from recruits
+                gameState.recruits = gameState.recruits.filter(r => r.id !== playerIn.id);
+
+                document.getElementById('swap-info').textContent = `✅ Swapped ${playerOut.name} (${playerOut.rating}) → ${playerIn.name} (${playerIn.rating})`;
+                gameState.selectedRecruit = null;
+
+                // Re-render both lists
+                renderSquadForSwap();
+
+                const recruitsContainer = document.getElementById('recruits-display');
+                recruitsContainer.innerHTML = gameState.recruits.map(p => `
+                    <div class="player-card recruit clickable" data-player-id="${p.id}">
+                        <div>
+                            <div class="player-name">${p.name}</div>
+                            <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
+                        </div>
+                        <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
+                    </div>
+                `).join('');
+            };
+        }
+
+        function showOffers() {
+            const offers = generateOffers();
+            const grid = document.getElementById('offers-grid');
+
+            // Add current team as "stay" option in the offers
+            grid.innerHTML = offers.map((offer, i) => `
+                <div class="offer-card" data-offer-index="${i}">
+                    <div class="team-emoji">${offer.team.emoji}</div>
+                    <div class="team-name">${offer.team.name}</div>
+                    <div class="team-rating">Team Rating: ~${Math.round(offer.roster.reduce((s,p) => s+p.rating, 0) / offer.roster.length)}</div>
+                </div>
+            `).join('');
+
+            grid.onclick = (e) => {
+                const card = e.target.closest('.offer-card');
+                if (!card) return;
+
+                const idx = parseInt(card.dataset.offerIndex);
+                const offer = offers[idx];
+
+                // Switch teams
+                if (!gameState.stats.teamsCoached.includes(gameState.currentTeam.name)) {
+                    gameState.stats.teamsCoached.push(gameState.currentTeam.name);
+                }
+                gameState.currentTeam = offer.team;
+                gameState.roster = offer.roster;
+                if (!gameState.stats.teamsCoached.includes(offer.team.name)) {
+                    gameState.stats.teamsCoached.push(offer.team.name);
+                }
+
+                nextSeason();
+            };
+
+            document.getElementById('btn-stay').onclick = () => nextSeason();
+
+            showScreen('screen-offers');
+        }
+
+        function nextSeason() {
+            gameState.season++;
+            ageRoster();
+
+            if (gameState.season > 20) {
+                showCareerEnd();
+            } else {
+                startSeason();
+            }
+        }
+
+        function showCareerEnd() {
+            const stats = document.getElementById('career-stats');
+            stats.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-value">${gameState.stats.premierships}</div>
+                    <div class="stat-label">Premierships</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${gameState.stats.finals}</div>
+                    <div class="stat-label">Finals Series</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${gameState.stats.teamsCoached.length || 1}</div>
+                    <div class="stat-label">Teams Coached</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${gameState.careerHistory.reduce((s,h) => s + h.wins, 0)}</div>
+                    <div class="stat-label">Career Wins</div>
+                </div>
+            `;
+
+            const history = document.getElementById('career-history');
+            history.innerHTML = gameState.careerHistory.map(h => `
+                <div class="history-item ${h.isPrem ? 'premiership' : ''}">
+                    <span>S${h.season} ${h.emoji} ${h.team}</span>
+                    <span>${h.finish} (${h.wins}-${h.losses})</span>
+                </div>
+            `).join('');
+
+            showScreen('screen-end');
+        }
+
+        // Event Listeners
+        document.getElementById('btn-start').onclick = () => {
+            gameState.roster = generateRoster();
+            if (!gameState.stats.teamsCoached.includes(gameState.currentTeam.name)) {
+                gameState.stats.teamsCoached.push(gameState.currentTeam.name);
+            }
+            startSeason();
+        };
+
+        document.getElementById('btn-sim').onclick = () => {
+            const result = simulateSeason();
+            showResult(result);
+        };
+
+        document.getElementById('btn-offseason').onclick = () => {
+            showOffseason();
+        };
+
+        document.getElementById('btn-continue').onclick = () => {
+            // Check if should get coaching offers
+            if (shouldGetOffers(gameState.lastResult)) {
+                showOffers();
+            } else {
+                nextSeason();
+            }
+        };
+
+        document.getElementById('btn-restart').onclick = () => {
+            gameState = {
+                currentTeam: null,
+                season: 1,
+                roster: [],
+                recruits: [],
+                selectedRecruit: null,
+                careerHistory: [],
+                stats: { premierships: 0, finals: 0, teamsCoached: [] }
+            };
+            document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('btn-start').disabled = true;
+            showScreen('screen-title');
+        };
+
+        // Initialize
+        renderTeamSelection();
+    </script>
+</body>
+</html>
