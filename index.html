@@ -144,6 +144,9 @@
         .player-dot .rating.star { color: #4ecdc4; }
         .player-dot .rating.good { color: #95a5a6; }
         .player-dot .era { font-size: 0.7em; color: #888; }
+        .player-dot .position { font-size: 0.65em; color: #f39c12; margin-top: 1px; }
+        .player-dot .penalty { color: #e74c3c; font-size: 0.6em; }
+        .player-dot.swap-selected { border-color: #f39c12; background: rgba(243,156,18,0.4); transform: scale(1.1); }
 
         /* Bench */
         .bench-section {
@@ -201,6 +204,54 @@
         }
         .offer-card:hover { transform: translateY(-3px); border-color: #f39c12; }
         .offer-card .team-emoji { font-size: 3em; }
+        .offer-card .preview-btn {
+            margin-top: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        /* Offer Preview Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 { margin: 0; }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
         /* Recruit Panel */
         .recruit-panel {
@@ -280,6 +331,7 @@
                 <div id="current-team-name">West Coast Eagles</div>
                 <div class="team-rating">Team Rating: <span id="team-rating">75</span></div>
             </div>
+            <div class="swap-info" id="season-swap-info">Click a player to select, then click another to swap positions</div>
 
             <div class="field-container">
                 <div class="field-lines"></div>
@@ -377,6 +429,21 @@
             </p>
             <div class="offers-grid" id="offers-grid"></div>
             <button class="btn btn-secondary" id="btn-stay">Stay with Current Club</button>
+        </div>
+
+        <!-- Offer Preview Modal -->
+        <div id="offer-preview-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="preview-team-name">🦅 Team Name</h2>
+                    <button class="modal-close" id="preview-close">&times;</button>
+                </div>
+                <div id="preview-field-container"></div>
+                <div class="modal-actions">
+                    <button class="btn" id="preview-accept">Accept Offer</button>
+                    <button class="btn btn-secondary" id="preview-decline">Decline</button>
+                </div>
+            </div>
         </div>
 
         <!-- Career End Screen -->
@@ -580,9 +647,33 @@
             usedPlayers: new Set(),
             recruits: [],
             selectedRecruit: null,
+            selectedSwapPlayer: null,
             careerHistory: [],
-            stats: { premierships: 0, finals: 0, teamsCoached: [] }
+            stats: { premierships: 0, finals: 0, teamsCoached: [] },
+            previewOffer: null
         };
+
+        // Position Compatibility - which positions a player can play without penalty
+        const POSITION_COMPAT = {
+            'FB': ['FB', 'HB'],
+            'HB': ['HB', 'FB', 'MID'],
+            'MID': ['MID', 'HB', 'HF'],
+            'RUC': ['RUC', 'FF'],
+            'HF': ['HF', 'FF', 'MID'],
+            'FF': ['FF', 'HF']
+        };
+
+        function getPositionPenalty(player, line) {
+            if (line === 'BENCH') return 0;
+            const compat = POSITION_COMPAT[player.pos] || [player.pos];
+            if (compat.includes(line)) return 0;
+            return 5; // 5 point penalty for out of position
+        }
+
+        function getEffectiveRating(player) {
+            const penalty = getPositionPenalty(player, player.line);
+            return player.rating - penalty;
+        }
 
         // Helper Functions
         function getRandomLegend(position = null) {
@@ -671,7 +762,7 @@
 
         function getTeamRating() {
             if (!gameState.roster.length) return 0;
-            const total = gameState.roster.reduce((sum, p) => sum + p.rating, 0);
+            const total = gameState.roster.reduce((sum, p) => sum + getEffectiveRating(p), 0);
             return Math.round(total / gameState.roster.length);
         }
 
@@ -753,27 +844,32 @@
         }
 
         function createPlayerDot(player, clickable = false) {
+            const penalty = getPositionPenalty(player, player.line);
+            const effectiveRating = getEffectiveRating(player);
+            const penaltyHtml = penalty > 0 ? `<span class="penalty">(-${penalty})</span>` : '';
             return `
                 <div class="player-dot ${clickable ? 'clickable' : ''}" data-player-id="${player.id}">
                     <div class="name">${player.name}</div>
                     <div class="team-label">${player.team}</div>
-                    <div class="rating ${getRatingClass(player.rating)}">${player.rating}</div>
+                    <div class="position">${player.pos}</div>
+                    <div class="rating ${getRatingClass(effectiveRating)}">${effectiveRating} ${penaltyHtml}</div>
                 </div>
             `;
         }
 
-        function renderField(prefix = '') {
+        function renderField(prefix = '', roster = null) {
+            const rosterToUse = roster || gameState.roster;
             const lines = {
-                fb: gameState.roster.filter(p => p.line === 'FB'),
-                hb: gameState.roster.filter(p => p.line === 'HB'),
-                mid: gameState.roster.filter(p => p.line === 'MID'),
-                ruck: gameState.roster.filter(p => p.line === 'RUC'),
-                hf: gameState.roster.filter(p => p.line === 'HF'),
-                ff: gameState.roster.filter(p => p.line === 'FF'),
-                bench: gameState.roster.filter(p => p.line === 'BENCH')
+                fb: rosterToUse.filter(p => p.line === 'FB'),
+                hb: rosterToUse.filter(p => p.line === 'HB'),
+                mid: rosterToUse.filter(p => p.line === 'MID'),
+                ruck: rosterToUse.filter(p => p.line === 'RUC'),
+                hf: rosterToUse.filter(p => p.line === 'HF'),
+                ff: rosterToUse.filter(p => p.line === 'FF'),
+                bench: rosterToUse.filter(p => p.line === 'BENCH')
             };
 
-            const clickable = prefix === 'swap-';
+            const clickable = prefix === 'swap-' || prefix === '';
 
             document.getElementById(`${prefix}fb-row`).innerHTML = `<span class="position-label">FB</span>` + lines.fb.map(p => createPlayerDot(p, clickable)).join('');
             document.getElementById(`${prefix}hb-row`).innerHTML = `<span class="position-label">HB</span>` + lines.hb.map(p => createPlayerDot(p, clickable)).join('');
@@ -784,12 +880,56 @@
             document.getElementById(`${prefix}bench-row`).innerHTML = lines.bench.map(p => createPlayerDot(p, clickable)).join('');
         }
 
+        function setupSeasonSwap() {
+            const fieldContainer = document.querySelector('#screen-season .field-container');
+            const benchRow = document.getElementById('bench-row');
+            const swapInfo = document.getElementById('season-swap-info');
+
+            const handleSwapClick = (e) => {
+                const dot = e.target.closest('.player-dot');
+                if (!dot) return;
+
+                const playerId = dot.dataset.playerId;
+                const player = gameState.roster.find(p => p.id === playerId);
+                if (!player) return;
+
+                if (!gameState.selectedSwapPlayer) {
+                    gameState.selectedSwapPlayer = player;
+                    dot.classList.add('swap-selected');
+                    swapInfo.innerHTML = `Selected <strong>${player.name}</strong>. Click another player to swap positions.`;
+                } else {
+                    if (gameState.selectedSwapPlayer.id === playerId) {
+                        gameState.selectedSwapPlayer = null;
+                        dot.classList.remove('swap-selected');
+                        swapInfo.innerHTML = 'Click a player to select, then click another to swap positions';
+                    } else {
+                        const tempLine = gameState.selectedSwapPlayer.line;
+                        gameState.selectedSwapPlayer.line = player.line;
+                        player.line = tempLine;
+
+                        swapInfo.innerHTML = `✅ Swapped <strong>${gameState.selectedSwapPlayer.name}</strong> ↔ <strong>${player.name}</strong>`;
+                        gameState.selectedSwapPlayer = null;
+
+                        renderField();
+                        setupSeasonSwap();
+                        document.getElementById('team-rating').textContent = getTeamRating();
+                    }
+                }
+            };
+
+            fieldContainer.onclick = handleSwapClick;
+            benchRow.onclick = handleSwapClick;
+        }
+
         function startSeason() {
             document.getElementById('season-num').textContent = gameState.season;
             document.getElementById('current-team-badge').textContent = gameState.currentTeam.emoji;
             document.getElementById('current-team-name').textContent = gameState.currentTeam.name;
             document.getElementById('team-rating').textContent = getTeamRating();
+            document.getElementById('season-swap-info').innerHTML = 'Click a player to select, then click another to swap positions';
+            gameState.selectedSwapPlayer = null;
             renderField();
+            setupSeasonSwap();
             showScreen('screen-season');
         }
 
@@ -898,14 +1038,15 @@
         }
 
         function showOffers() {
-            const offers = generateOffers();
+            gameState.offers = generateOffers();
             const grid = document.getElementById('offers-grid');
 
-            grid.innerHTML = offers.map((offer, i) => `
+            grid.innerHTML = gameState.offers.map((offer, i) => `
                 <div class="offer-card" data-offer-index="${i}">
                     <div class="team-emoji">${offer.team.emoji}</div>
                     <div class="team-name">${offer.team.name}</div>
                     <div class="team-rating">Team Rating: ~${Math.round(offer.roster.reduce((s,p) => s+p.rating, 0) / offer.roster.length)}</div>
+                    <div class="preview-btn">Click to Preview Team</div>
                 </div>
             `).join('');
 
@@ -914,22 +1055,63 @@
                 if (!card) return;
 
                 const idx = parseInt(card.dataset.offerIndex);
-                const offer = offers[idx];
-
-                if (!gameState.stats.teamsCoached.includes(gameState.currentTeam.name)) {
-                    gameState.stats.teamsCoached.push(gameState.currentTeam.name);
-                }
-                gameState.currentTeam = offer.team;
-                gameState.roster = offer.roster;
-                if (!gameState.stats.teamsCoached.includes(offer.team.name)) {
-                    gameState.stats.teamsCoached.push(offer.team.name);
-                }
-
-                nextSeason();
+                showOfferPreview(gameState.offers[idx]);
             };
 
             document.getElementById('btn-stay').onclick = () => nextSeason();
             showScreen('screen-offers');
+        }
+
+        function showOfferPreview(offer) {
+            gameState.previewOffer = offer;
+
+            document.getElementById('preview-team-name').textContent = `${offer.team.emoji} ${offer.team.name}`;
+
+            const container = document.getElementById('preview-field-container');
+            const lines = {
+                fb: offer.roster.filter(p => p.line === 'FB'),
+                hb: offer.roster.filter(p => p.line === 'HB'),
+                mid: offer.roster.filter(p => p.line === 'MID'),
+                ruck: offer.roster.filter(p => p.line === 'RUC'),
+                hf: offer.roster.filter(p => p.line === 'HF'),
+                ff: offer.roster.filter(p => p.line === 'FF'),
+                bench: offer.roster.filter(p => p.line === 'BENCH')
+            };
+
+            container.innerHTML = `
+                <div class="field-container">
+                    <div class="field-lines"></div>
+                    <div class="field-center"></div>
+                    <div class="position-row"><span class="position-label">FB</span>${lines.fb.map(p => createPlayerDot(p, false)).join('')}</div>
+                    <div class="position-row"><span class="position-label">HB</span>${lines.hb.map(p => createPlayerDot(p, false)).join('')}</div>
+                    <div class="position-row"><span class="position-label">MID</span>${lines.mid.map(p => createPlayerDot(p, false)).join('')}</div>
+                    <div class="position-row"><span class="position-label">RUC</span>${lines.ruck.map(p => createPlayerDot(p, false)).join('')}</div>
+                    <div class="position-row"><span class="position-label">HF</span>${lines.hf.map(p => createPlayerDot(p, false)).join('')}</div>
+                    <div class="position-row"><span class="position-label">FF</span>${lines.ff.map(p => createPlayerDot(p, false)).join('')}</div>
+                </div>
+                <div class="bench-section">
+                    <h4>INTERCHANGE</h4>
+                    <div class="bench-row">${lines.bench.map(p => createPlayerDot(p, false)).join('')}</div>
+                </div>
+                <div style="text-align: center; margin-top: 15px; color: #4ecdc4;">
+                    Team Rating: ${Math.round(offer.roster.reduce((s,p) => s+getEffectiveRating(p), 0) / offer.roster.length)}
+                </div>
+            `;
+
+            document.getElementById('offer-preview-modal').classList.remove('hidden');
+        }
+
+        function acceptOffer(offer) {
+            if (!gameState.stats.teamsCoached.includes(gameState.currentTeam.name)) {
+                gameState.stats.teamsCoached.push(gameState.currentTeam.name);
+            }
+            gameState.currentTeam = offer.team;
+            gameState.roster = offer.roster;
+            if (!gameState.stats.teamsCoached.includes(offer.team.name)) {
+                gameState.stats.teamsCoached.push(offer.team.name);
+            }
+            document.getElementById('offer-preview-modal').classList.add('hidden');
+            nextSeason();
         }
 
         function nextSeason() {
@@ -1005,12 +1187,27 @@
                 usedPlayers: new Set(),
                 recruits: [],
                 selectedRecruit: null,
+                selectedSwapPlayer: null,
                 careerHistory: [],
-                stats: { premierships: 0, finals: 0, teamsCoached: [] }
+                stats: { premierships: 0, finals: 0, teamsCoached: [] },
+                previewOffer: null
             };
             document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('btn-start').disabled = true;
             showScreen('screen-title');
+        };
+
+        // Preview modal event listeners
+        document.getElementById('preview-close').onclick = () => {
+            document.getElementById('offer-preview-modal').classList.add('hidden');
+        };
+        document.getElementById('preview-decline').onclick = () => {
+            document.getElementById('offer-preview-modal').classList.add('hidden');
+        };
+        document.getElementById('preview-accept').onclick = () => {
+            if (gameState.previewOffer) {
+                acceptOffer(gameState.previewOffer);
+            }
         };
 
         // Initialize
