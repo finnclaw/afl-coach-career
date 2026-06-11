@@ -1,5 +1,30 @@
 # AFL Coach Career - Changelog
 
+## v3.0.0 - 2026-06-11
+
+### Position Management & Team Preview
+
+**New Features:**
+- **Player Swapping** — Click any player on the season screen, then click another to swap their positions. Rearrange your team for optimal performance.
+
+- **Position Display** — Each player card now shows their natural position (FB, HB, MID, RUC, HF, FF) so you know where they belong.
+
+- **Out-of-Position Penalties** — Players get a -5 rating penalty when playing outside their compatible positions:
+  - FB can play: FB, HB
+  - HB can play: HB, FB, MID
+  - MID can play: MID, HB, HF
+  - RUC can play: RUC, FF
+  - HF can play: HF, FF, MID
+  - FF can play: FF, HF
+
+- **Coaching Offer Previews** — When you get a coaching offer, click to see the full team roster before deciding:
+  - View the entire team on a football field
+  - See each player's rating with any position penalties
+  - Accept or decline each offer individually
+  - Close preview to compare other offers
+
+---
+
 ## v2.0.0 - 2026-06-11
 
 ### Major Update: Historical Legends & Football Field UI
