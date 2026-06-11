@@ -13,7 +13,7 @@
             min-height: 100vh;
             padding: 20px;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; }
         h1 { text-align: center; font-size: 2.5em; margin-bottom: 10px; }
         .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
 
@@ -54,15 +54,8 @@
         }
         .btn:hover { transform: scale(1.05); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-secondary {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-        }
-        .btn-small {
-            padding: 8px 20px;
-            font-size: 0.9em;
-            margin: 5px;
-            display: inline-block;
-        }
+        .btn-secondary { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .btn-small { padding: 8px 20px; font-size: 0.9em; margin: 5px; display: inline-block; }
 
         /* Game Screen */
         .hidden { display: none !important; }
@@ -80,39 +73,86 @@
         .season-num { font-size: 3em; color: #f39c12; }
         .team-badge { font-size: 4em; margin: 10px 0; }
 
-        /* Roster */
-        .roster-section {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
+        /* Football Field */
+        .field-container {
+            background: linear-gradient(180deg, #2d5a27 0%, #3d7a37 50%, #2d5a27 100%);
+            border-radius: 100px / 30px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            position: relative;
+            border: 4px solid #1a3d15;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
         }
-        .roster-section h3 { margin-bottom: 15px; color: #4ecdc4; }
-        .player-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        .field-lines {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: rgba(255,255,255,0.2);
+        }
+        .field-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        .position-row {
+            display: flex;
+            justify-content: center;
             gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
-        .player-card {
-            background: rgba(255,255,255,0.1);
-            padding: 12px;
+        .position-label {
+            position: absolute;
+            left: 10px;
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .player-dot {
+            width: 90px;
+            height: 70px;
+            background: rgba(0,0,0,0.7);
             border-radius: 8px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            font-size: 0.75em;
+            text-align: center;
+            padding: 5px;
         }
-        .player-card.recruit { border: 2px dashed #4ecdc4; }
-        .player-card.selected-swap { border: 2px solid #e74c3c; background: rgba(231,76,60,0.2); }
-        .player-name { font-weight: 500; }
-        .player-rating {
-            background: linear-gradient(135deg, #f39c12, #e74c3c);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-weight: 600;
-            font-size: 0.85em;
+        .player-dot:hover { transform: scale(1.1); border-color: #4ecdc4; }
+        .player-dot.clickable { cursor: pointer; }
+        .player-dot.selected { border-color: #f39c12; background: rgba(243,156,18,0.3); }
+        .player-dot .name { font-weight: 600; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+        .player-dot .rating { font-size: 1.1em; font-weight: bold; margin-top: 2px; }
+        .player-dot .rating.elite { color: #f1c40f; }
+        .player-dot .rating.star { color: #4ecdc4; }
+        .player-dot .rating.good { color: #95a5a6; }
+        .player-dot .era { font-size: 0.7em; color: #888; }
+
+        /* Bench */
+        .bench-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
         }
-        .player-rating.high { background: linear-gradient(135deg, #27ae60, #2ecc71); }
-        .player-rating.low { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+        .bench-section h4 { margin-bottom: 10px; color: #888; font-size: 0.9em; }
+        .bench-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
         /* Results */
         .result-display {
@@ -126,7 +166,23 @@
         .result-display.premiers { background: linear-gradient(135deg, rgba(241,196,15,0.3), rgba(243,156,18,0.3)); }
         .result-display.finals { background: linear-gradient(135deg, rgba(52,152,219,0.3), rgba(41,128,185,0.3)); }
 
-        /* Coaching Offers */
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value { font-size: 2.5em; color: #f39c12; }
+        .stat-label { color: #888; font-size: 0.9em; }
+
+        /* Offers Grid */
         .offers-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -145,23 +201,43 @@
         .offer-card:hover { transform: translateY(-3px); border-color: #f39c12; }
         .offer-card .team-emoji { font-size: 3em; }
 
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+        /* Recruit Panel */
+        .recruit-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
             margin: 20px 0;
         }
-        .stat-box {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
+        .recruit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
-        .stat-value { font-size: 2.5em; color: #f39c12; }
-        .stat-label { color: #888; font-size: 0.9em; }
+        .recruit-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px dashed #4ecdc4;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .recruit-card:hover { background: rgba(78,205,196,0.2); }
+        .recruit-card.selected { border-color: #f39c12; background: rgba(243,156,18,0.2); }
+        .recruit-card .player-name { font-weight: 600; font-size: 1.1em; }
+        .recruit-card .player-details { color: #888; font-size: 0.85em; margin: 5px 0; }
+        .recruit-card .player-rating { font-size: 1.5em; font-weight: bold; color: #4ecdc4; }
 
-        /* Career History */
+        /* Swap Info */
+        .swap-info {
+            text-align: center;
+            padding: 15px;
+            background: rgba(78,205,196,0.1);
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 50px;
+        }
+
+        /* History */
         .history-list {
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
@@ -178,27 +254,10 @@
         .history-item:last-child { border-bottom: none; }
         .history-item.premiership { color: #f1c40f; }
 
-        /* Swap Interface */
-        .swap-container {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-        .swap-arrow {
-            font-size: 3em;
-            color: #4ecdc4;
-            align-self: center;
-            margin-top: 50px;
-        }
-        .swap-panel h3 { margin-bottom: 15px; text-align: center; }
-        .player-card.clickable { cursor: pointer; transition: all 0.2s; }
-        .player-card.clickable:hover { background: rgba(255,255,255,0.2); }
-
         /* Responsive */
         @media (max-width: 768px) {
-            .swap-container { grid-template-columns: 1fr; }
-            .swap-arrow { transform: rotate(90deg); justify-self: center; margin: 20px 0; }
+            .player-dot { width: 70px; height: 55px; font-size: 0.65em; }
+            .player-dot .name { max-width: 60px; }
         }
     </style>
 </head>
@@ -207,10 +266,8 @@
         <!-- Title Screen -->
         <div id="screen-title" class="screen">
             <h1>🏈 AFL Coach Career</h1>
-            <p class="subtitle">20 seasons. One legacy. Choose your club.</p>
-
+            <p class="subtitle">Build the ultimate team from 130 years of AFL/VFL legends. 20 seasons. One legacy.</p>
             <div class="team-grid" id="team-grid"></div>
-
             <button class="btn" id="btn-start" disabled>Start Career</button>
         </div>
 
@@ -223,9 +280,33 @@
                 <div class="team-rating">Team Rating: <span id="team-rating">75</span></div>
             </div>
 
-            <div class="roster-section">
-                <h3>Your Squad</h3>
-                <div class="player-list" id="roster-display"></div>
+            <div class="field-container">
+                <div class="field-lines"></div>
+                <div class="field-center"></div>
+
+                <div class="position-row" id="fb-row">
+                    <span class="position-label">FB</span>
+                </div>
+                <div class="position-row" id="hb-row">
+                    <span class="position-label">HB</span>
+                </div>
+                <div class="position-row" id="mid-row">
+                    <span class="position-label">MID</span>
+                </div>
+                <div class="position-row" id="ruck-row">
+                    <span class="position-label">RUC</span>
+                </div>
+                <div class="position-row" id="hf-row">
+                    <span class="position-label">HF</span>
+                </div>
+                <div class="position-row" id="ff-row">
+                    <span class="position-label">FF</span>
+                </div>
+            </div>
+
+            <div class="bench-section">
+                <h4>INTERCHANGE</h4>
+                <div class="bench-row" id="bench-row"></div>
             </div>
 
             <button class="btn" id="btn-sim">Simulate Season</button>
@@ -237,7 +318,6 @@
                 <h2 id="result-title">Premiers!</h2>
                 <p id="result-desc">Your team dominated the competition</p>
             </div>
-
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-value" id="stat-wins">18</div>
@@ -252,30 +332,38 @@
                     <div class="stat-label">Ladder</div>
                 </div>
             </div>
-
             <button class="btn" id="btn-offseason">Off-Season</button>
         </div>
 
         <!-- Off-Season Screen -->
         <div id="screen-offseason" class="screen hidden">
             <h2 style="text-align: center; margin-bottom: 20px;">Off-Season Recruiting</h2>
-            <p style="text-align: center; color: #888; margin-bottom: 30px;">
-                5 players want to join your club. Click a recruit, then click one of your players to swap them.
+            <p style="text-align: center; color: #888; margin-bottom: 20px;">
+                5 legends want to join your club. Click a recruit, then click one of your players on the field to swap.
             </p>
 
-            <div class="swap-container">
-                <div class="swap-panel">
-                    <h3>🆕 Available Recruits</h3>
-                    <div class="player-list" id="recruits-display"></div>
-                </div>
-                <div class="swap-arrow">⇄</div>
-                <div class="swap-panel">
-                    <h3>📋 Your Squad</h3>
-                    <div class="player-list" id="squad-swap-display"></div>
-                </div>
+            <div class="recruit-panel">
+                <h3 style="margin-bottom: 15px; color: #4ecdc4;">🌟 Available Legends</h3>
+                <div class="recruit-grid" id="recruits-display"></div>
             </div>
 
-            <div id="swap-info" style="text-align: center; margin: 20px 0; color: #4ecdc4; min-height: 30px;"></div>
+            <div class="swap-info" id="swap-info">Select a recruit to begin</div>
+
+            <div class="field-container">
+                <div class="field-lines"></div>
+                <div class="field-center"></div>
+                <div class="position-row" id="swap-fb-row"><span class="position-label">FB</span></div>
+                <div class="position-row" id="swap-hb-row"><span class="position-label">HB</span></div>
+                <div class="position-row" id="swap-mid-row"><span class="position-label">MID</span></div>
+                <div class="position-row" id="swap-ruck-row"><span class="position-label">RUC</span></div>
+                <div class="position-row" id="swap-hf-row"><span class="position-label">HF</span></div>
+                <div class="position-row" id="swap-ff-row"><span class="position-label">FF</span></div>
+            </div>
+
+            <div class="bench-section">
+                <h4>INTERCHANGE</h4>
+                <div class="bench-row" id="swap-bench-row"></div>
+            </div>
 
             <button class="btn" id="btn-continue">Continue to Next Season</button>
         </div>
@@ -286,34 +374,26 @@
             <p style="text-align: center; color: #888; margin-bottom: 30px;">
                 Your success has attracted attention from other clubs.
             </p>
-
             <div class="offers-grid" id="offers-grid"></div>
-
             <button class="btn btn-secondary" id="btn-stay">Stay with Current Club</button>
         </div>
 
         <!-- Career End Screen -->
         <div id="screen-end" class="screen hidden">
             <h1 style="text-align: center; margin-bottom: 20px;">🏆 Career Complete</h1>
-
             <div class="stats-grid" id="career-stats"></div>
-
-            <div class="roster-section">
-                <h3>Career History</h3>
-                <div class="history-list" id="career-history"></div>
-            </div>
-
+            <div class="history-list" id="career-history" style="margin-top: 20px;"></div>
             <button class="btn" id="btn-restart">New Career</button>
         </div>
     </div>
 
     <script>
-        // AFL Teams Data
+        // AFL Teams
         const TEAMS = [
-            { id: 'ade', name: 'Adelaide Crows', emoji: '🐦', colors: ['#002b5c', '#ffd200'] },
+            { id: 'ade', name: 'Adelaide Crows', emoji: '🦅', colors: ['#002b5c', '#ffd200'] },
             { id: 'bri', name: 'Brisbane Lions', emoji: '🦁', colors: ['#a30046', '#0054a4'] },
             { id: 'car', name: 'Carlton Blues', emoji: '💙', colors: ['#001e3c', '#fff'] },
-            { id: 'col', name: 'Collingwood Magpies', emoji: '🐧', colors: ['#000', '#fff'] },
+            { id: 'col', name: 'Collingwood Magpies', emoji: '⚫', colors: ['#000', '#fff'] },
             { id: 'ess', name: 'Essendon Bombers', emoji: '✈️', colors: ['#cc2031', '#000'] },
             { id: 'fre', name: 'Fremantle Dockers', emoji: '⚓', colors: ['#2a0d45', '#fff'] },
             { id: 'gee', name: 'Geelong Cats', emoji: '🐱', colors: ['#001f3d', '#fff'] },
@@ -330,17 +410,165 @@
             { id: 'wbd', name: 'Western Bulldogs', emoji: '🐕', colors: ['#014896', '#c8102e'] }
         ];
 
-        const POSITIONS = ['DEF', 'MID', 'RUC', 'FWD'];
-        const FIRST_NAMES = ['Jack', 'Tom', 'Josh', 'Liam', 'Noah', 'Will', 'Charlie', 'James', 'Max', 'Zac', 'Ben', 'Sam', 'Luke', 'Ryan', 'Dylan', 'Toby', 'Harry', 'Finn', 'Oscar', 'Archie', 'Bailey', 'Kai', 'Mason', 'Riley', 'Jake', 'Connor', 'Patrick', 'Daniel', 'Marcus', 'Nick', 'Clay', 'Travis', 'Scott', 'Matt', 'Chris', 'Aaron', 'Isaac', 'Jordan', 'Caleb', 'Jye'];
-        const LAST_NAMES = ['Smith', 'Brown', 'Wilson', 'Martin', 'Kelly', 'Clark', 'Taylor', 'Anderson', 'Thomas', 'Walker', 'White', 'Harris', 'Lewis', 'Robinson', 'Thompson', 'King', 'Wright', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Nelson', 'Mitchell', 'Campbell', 'Roberts', 'Turner', 'Collins', 'Stewart', 'Murphy', 'Cox', 'Kennedy', 'Hughes', 'Moore', 'Gray', 'Reid', 'Watson', 'Brooks', 'Ward', 'Ross'];
+        // 150 Historical AFL Legends (1980s - Present)
+        const LEGENDS = [
+            // DEFENDERS - FB/HB
+            { name: 'Stephen Silvagni', pos: 'FB', era: '1990s', rating: 95, team: 'Carlton' },
+            { name: 'Matthew Scarlett', pos: 'FB', era: '2000s', rating: 94, team: 'Geelong' },
+            { name: 'Dustin Fletcher', pos: 'FB', era: '2000s', rating: 90, team: 'Essendon' },
+            { name: 'Chris Langford', pos: 'FB', era: '1980s', rating: 89, team: 'Hawthorn' },
+            { name: 'Glenn Jakovich', pos: 'FB', era: '1990s', rating: 88, team: 'West Coast' },
+            { name: 'Michael Tuck', pos: 'HB', era: '1980s', rating: 92, team: 'Hawthorn' },
+            { name: 'Chris Judd', pos: 'HB', era: '2000s', rating: 96, team: 'West Coast' },
+            { name: 'Sam Mitchell', pos: 'HB', era: '2010s', rating: 94, team: 'Hawthorn' },
+            { name: 'Luke Hodge', pos: 'HB', era: '2010s', rating: 95, team: 'Hawthorn' },
+            { name: 'Corey Enright', pos: 'HB', era: '2010s', rating: 93, team: 'Geelong' },
+            { name: 'Joel Selwood', pos: 'HB', era: '2020s', rating: 94, team: 'Geelong' },
+            { name: 'Harris Andrews', pos: 'FB', era: '2020s', rating: 91, team: 'Brisbane' },
+            { name: 'Steven May', pos: 'FB', era: '2020s', rating: 89, team: 'Melbourne' },
+            { name: 'Jacob Weitering', pos: 'FB', era: '2020s', rating: 90, team: 'Carlton' },
+            { name: 'Jordan Ridley', pos: 'FB', era: '2020s', rating: 87, team: 'Essendon' },
+            { name: 'Tom Stewart', pos: 'HB', era: '2020s', rating: 92, team: 'Geelong' },
+            { name: 'Nick Vlastuin', pos: 'HB', era: '2020s', rating: 89, team: 'Richmond' },
+            { name: 'Liam Jones', pos: 'FB', era: '2010s', rating: 85, team: 'Carlton' },
+            { name: 'Cale Hooker', pos: 'FB', era: '2010s', rating: 86, team: 'Essendon' },
+            { name: 'Phil Davis', pos: 'FB', era: '2010s', rating: 87, team: 'GWS' },
+            { name: 'Michael Hurley', pos: 'FB', era: '2010s', rating: 88, team: 'Essendon' },
+            { name: 'Brian Lake', pos: 'FB', era: '2010s', rating: 89, team: 'Bulldogs' },
+            { name: 'Darren Glass', pos: 'FB', era: '2000s', rating: 88, team: 'West Coast' },
+            { name: 'Matthew Boyd', pos: 'HB', era: '2010s', rating: 90, team: 'Bulldogs' },
+            { name: 'Kade Simpson', pos: 'HB', era: '2010s', rating: 88, team: 'Carlton' },
+
+            // MIDFIELDERS
+            { name: 'Leigh Matthews', pos: 'MID', era: '1980s', rating: 99, team: 'Hawthorn' },
+            { name: 'Gary Ablett Sr', pos: 'MID', era: '1990s', rating: 98, team: 'Geelong' },
+            { name: 'Gary Ablett Jr', pos: 'MID', era: '2010s', rating: 98, team: 'Geelong' },
+            { name: 'Dustin Martin', pos: 'MID', era: '2020s', rating: 97, team: 'Richmond' },
+            { name: 'Patrick Cripps', pos: 'MID', era: '2020s', rating: 96, team: 'Carlton' },
+            { name: 'Marcus Bontempelli', pos: 'MID', era: '2020s', rating: 97, team: 'Bulldogs' },
+            { name: 'Nick Daicos', pos: 'MID', era: '2020s', rating: 96, team: 'Collingwood' },
+            { name: 'Clayton Oliver', pos: 'MID', era: '2020s', rating: 95, team: 'Melbourne' },
+            { name: 'Christian Petracca', pos: 'MID', era: '2020s', rating: 95, team: 'Melbourne' },
+            { name: 'Lachie Neale', pos: 'MID', era: '2020s', rating: 96, team: 'Brisbane' },
+            { name: 'Nat Fyfe', pos: 'MID', era: '2010s', rating: 96, team: 'Fremantle' },
+            { name: 'Patrick Dangerfield', pos: 'MID', era: '2010s', rating: 96, team: 'Geelong' },
+            { name: 'Tom Mitchell', pos: 'MID', era: '2010s', rating: 94, team: 'Hawthorn' },
+            { name: 'Robert Harvey', pos: 'MID', era: '2000s', rating: 95, team: 'St Kilda' },
+            { name: 'Nathan Buckley', pos: 'MID', era: '2000s', rating: 95, team: 'Collingwood' },
+            { name: 'James Hird', pos: 'MID', era: '2000s', rating: 96, team: 'Essendon' },
+            { name: 'Mark Ricciuto', pos: 'MID', era: '2000s', rating: 94, team: 'Adelaide' },
+            { name: 'Simon Black', pos: 'MID', era: '2000s', rating: 94, team: 'Brisbane' },
+            { name: 'Ben Cousins', pos: 'MID', era: '2000s', rating: 95, team: 'West Coast' },
+            { name: 'Adam Goodes', pos: 'MID', era: '2000s', rating: 95, team: 'Sydney' },
+            { name: 'Dane Swan', pos: 'MID', era: '2010s', rating: 95, team: 'Collingwood' },
+            { name: 'Scott Pendlebury', pos: 'MID', era: '2020s', rating: 94, team: 'Collingwood' },
+            { name: 'Trent Cotchin', pos: 'MID', era: '2010s', rating: 93, team: 'Richmond' },
+            { name: 'Tom Rockliff', pos: 'MID', era: '2010s', rating: 91, team: 'Brisbane' },
+            { name: 'Dayne Beams', pos: 'MID', era: '2010s', rating: 90, team: 'Collingwood' },
+            { name: 'Greg Williams', pos: 'MID', era: '1990s', rating: 95, team: 'Sydney' },
+            { name: 'Peter Matera', pos: 'MID', era: '1990s', rating: 94, team: 'West Coast' },
+            { name: 'Tony Lockett', pos: 'MID', era: '1990s', rating: 97, team: 'St Kilda' },
+            { name: 'Michael Voss', pos: 'MID', era: '2000s', rating: 93, team: 'Brisbane' },
+            { name: 'Andrew McLeod', pos: 'MID', era: '2000s', rating: 94, team: 'Adelaide' },
+            { name: 'Chris Scott', pos: 'MID', era: '1990s', rating: 88, team: 'Brisbane' },
+            { name: 'Wayne Carey', pos: 'MID', era: '1990s', rating: 97, team: 'North Melbourne' },
+            { name: 'Barry Cable', pos: 'MID', era: '1980s', rating: 93, team: 'North Melbourne' },
+            { name: 'Royce Hart', pos: 'MID', era: '1980s', rating: 92, team: 'Richmond' },
+            { name: 'Kevin Bartlett', pos: 'MID', era: '1980s', rating: 93, team: 'Richmond' },
+            { name: 'Terry Daniher', pos: 'MID', era: '1980s', rating: 90, team: 'Essendon' },
+            { name: 'Tim Watson', pos: 'MID', era: '1980s', rating: 91, team: 'Essendon' },
+            { name: 'Paul Kelly', pos: 'MID', era: '1990s', rating: 93, team: 'Sydney' },
+            { name: 'Gavin Wanganeen', pos: 'MID', era: '1990s', rating: 92, team: 'Essendon' },
+            { name: 'Shane Crawford', pos: 'MID', era: '2000s', rating: 92, team: 'Hawthorn' },
+            { name: 'Jimmy Bartel', pos: 'MID', era: '2010s', rating: 93, team: 'Geelong' },
+            { name: 'Steve Johnson', pos: 'MID', era: '2010s', rating: 90, team: 'Geelong' },
+            { name: 'Gary Rohan', pos: 'MID', era: '2020s', rating: 85, team: 'Geelong' },
+            { name: 'Zach Merrett', pos: 'MID', era: '2020s', rating: 93, team: 'Essendon' },
+            { name: 'Andrew Brayshaw', pos: 'MID', era: '2020s', rating: 92, team: 'Fremantle' },
+            { name: 'Caleb Serong', pos: 'MID', era: '2020s', rating: 91, team: 'Fremantle' },
+            { name: 'Josh Daicos', pos: 'MID', era: '2020s', rating: 89, team: 'Collingwood' },
+            { name: 'Jack Viney', pos: 'MID', era: '2020s', rating: 89, team: 'Melbourne' },
+            { name: 'Josh Kelly', pos: 'MID', era: '2020s', rating: 90, team: 'GWS' },
+            { name: 'Tim Taranto', pos: 'MID', era: '2020s', rating: 89, team: 'Richmond' },
+            { name: 'Touk Miller', pos: 'MID', era: '2020s', rating: 91, team: 'Gold Coast' },
+            { name: 'Matt Rowell', pos: 'MID', era: '2020s', rating: 90, team: 'Gold Coast' },
+            { name: 'Noah Anderson', pos: 'MID', era: '2020s', rating: 88, team: 'Gold Coast' },
+            { name: 'Errol Gulden', pos: 'MID', era: '2020s', rating: 92, team: 'Sydney' },
+            { name: 'Isaac Heeney', pos: 'MID', era: '2020s', rating: 93, team: 'Sydney' },
+            { name: 'Chad Warner', pos: 'MID', era: '2020s', rating: 92, team: 'Sydney' },
+
+            // RUCKMEN
+            { name: 'Dean Cox', pos: 'RUC', era: '2010s', rating: 95, team: 'West Coast' },
+            { name: 'Nic Naitanui', pos: 'RUC', era: '2020s', rating: 93, team: 'West Coast' },
+            { name: 'Max Gawn', pos: 'RUC', era: '2020s', rating: 95, team: 'Melbourne' },
+            { name: 'Brodie Grundy', pos: 'RUC', era: '2020s', rating: 93, team: 'Collingwood' },
+            { name: 'Todd Goldstein', pos: 'RUC', era: '2010s', rating: 91, team: 'North Melbourne' },
+            { name: 'Paddy Ryder', pos: 'RUC', era: '2010s', rating: 89, team: 'Essendon' },
+            { name: 'Sam Jacobs', pos: 'RUC', era: '2010s', rating: 88, team: 'Adelaide' },
+            { name: 'Matthew Kreuzer', pos: 'RUC', era: '2010s', rating: 87, team: 'Carlton' },
+            { name: 'Aaron Sandilands', pos: 'RUC', era: '2010s', rating: 92, team: 'Fremantle' },
+            { name: 'Jeff White', pos: 'RUC', era: '2000s', rating: 88, team: 'Melbourne' },
+            { name: 'Shaun Grigg', pos: 'RUC', era: '2010s', rating: 85, team: 'Richmond' },
+            { name: 'Tim English', pos: 'RUC', era: '2020s', rating: 91, team: 'Bulldogs' },
+            { name: 'Sean Darcy', pos: 'RUC', era: '2020s', rating: 90, team: 'Fremantle' },
+            { name: 'Tristan Xerri', pos: 'RUC', era: '2020s', rating: 87, team: 'North Melbourne' },
+            { name: 'Jarrod Witts', pos: 'RUC', era: '2020s', rating: 88, team: 'Gold Coast' },
+            { name: 'Reilly OBrien', pos: 'RUC', era: '2020s', rating: 89, team: 'Adelaide' },
+            { name: 'Luke Jackson', pos: 'RUC', era: '2020s', rating: 88, team: 'Fremantle' },
+            { name: 'Oscar McInerney', pos: 'RUC', era: '2020s', rating: 86, team: 'Brisbane' },
+
+            // FORWARDS - HF/FF
+            { name: 'Jason Dunstall', pos: 'FF', era: '1990s', rating: 96, team: 'Hawthorn' },
+            { name: 'Lance Franklin', pos: 'FF', era: '2010s', rating: 97, team: 'Hawthorn' },
+            { name: 'Matthew Lloyd', pos: 'FF', era: '2000s', rating: 94, team: 'Essendon' },
+            { name: 'Jack Riewoldt', pos: 'FF', era: '2010s', rating: 93, team: 'Richmond' },
+            { name: 'Tom Hawkins', pos: 'FF', era: '2020s', rating: 93, team: 'Geelong' },
+            { name: 'Jeremy Cameron', pos: 'FF', era: '2020s', rating: 94, team: 'Geelong' },
+            { name: 'Charlie Curnow', pos: 'FF', era: '2020s', rating: 95, team: 'Carlton' },
+            { name: 'Harry McKay', pos: 'FF', era: '2020s', rating: 92, team: 'Carlton' },
+            { name: 'Joe Daniher', pos: 'FF', era: '2020s', rating: 91, team: 'Brisbane' },
+            { name: 'Jesse Hogan', pos: 'FF', era: '2020s', rating: 90, team: 'GWS' },
+            { name: 'Mitch McGovern', pos: 'HF', era: '2020s', rating: 85, team: 'Carlton' },
+            { name: 'Taylor Walker', pos: 'FF', era: '2010s', rating: 91, team: 'Adelaide' },
+            { name: 'Josh Kennedy (Syd)', pos: 'FF', era: '2010s', rating: 93, team: 'Sydney' },
+            { name: 'Josh Kennedy (WCE)', pos: 'FF', era: '2010s', rating: 92, team: 'West Coast' },
+            { name: 'Nick Riewoldt', pos: 'FF', era: '2010s', rating: 94, team: 'St Kilda' },
+            { name: 'Jonathan Brown', pos: 'FF', era: '2000s', rating: 93, team: 'Brisbane' },
+            { name: 'Travis Cloke', pos: 'FF', era: '2010s', rating: 89, team: 'Collingwood' },
+            { name: 'Barry Hall', pos: 'FF', era: '2000s', rating: 92, team: 'Sydney' },
+            { name: 'Brendan Fevola', pos: 'FF', era: '2000s', rating: 91, team: 'Carlton' },
+            { name: 'Fraser Gehrig', pos: 'FF', era: '2000s', rating: 89, team: 'St Kilda' },
+            { name: 'Lloyd', pos: 'FF', era: '1990s', rating: 88, team: 'Adelaide' },
+            { name: 'Lockett', pos: 'FF', era: '1980s', rating: 97, team: 'St Kilda' },
+            { name: 'Dermott Brereton', pos: 'HF', era: '1980s', rating: 91, team: 'Hawthorn' },
+            { name: 'Gary Ayres', pos: 'HF', era: '1980s', rating: 90, team: 'Hawthorn' },
+            { name: 'Cyril Rioli', pos: 'HF', era: '2010s', rating: 92, team: 'Hawthorn' },
+            { name: 'Eddie Betts', pos: 'HF', era: '2010s', rating: 91, team: 'Carlton' },
+            { name: 'Chad Wingard', pos: 'HF', era: '2010s', rating: 88, team: 'Port Adelaide' },
+            { name: 'Robbie Gray', pos: 'HF', era: '2010s', rating: 91, team: 'Port Adelaide' },
+            { name: 'Tom Lynch (Ade)', pos: 'HF', era: '2010s', rating: 87, team: 'Adelaide' },
+            { name: 'Tom Lynch (Rich)', pos: 'FF', era: '2020s', rating: 92, team: 'Richmond' },
+            { name: 'Ben King', pos: 'FF', era: '2020s', rating: 91, team: 'Gold Coast' },
+            { name: 'Max King', pos: 'FF', era: '2020s', rating: 90, team: 'St Kilda' },
+            { name: 'Aaron Naughton', pos: 'FF', era: '2020s', rating: 90, team: 'Bulldogs' },
+            { name: 'Jamarra Ugle-Hagan', pos: 'FF', era: '2020s', rating: 86, team: 'Bulldogs' },
+            { name: 'Mabior Chol', pos: 'FF', era: '2020s', rating: 84, team: 'Gold Coast' },
+            { name: 'Cameron Zurhaar', pos: 'HF', era: '2020s', rating: 87, team: 'North Melbourne' },
+            { name: 'Small', pos: 'HF', era: '2020s', rating: 86, team: 'GWS' },
+            { name: 'Daniel Rioli', pos: 'HF', era: '2020s', rating: 88, team: 'Gold Coast' },
+            { name: 'Shai Bolton', pos: 'HF', era: '2020s', rating: 91, team: 'Fremantle' },
+            { name: 'Bobby Hill', pos: 'HF', era: '2020s', rating: 88, team: 'Collingwood' },
+            { name: 'Izak Rankine', pos: 'HF', era: '2020s', rating: 89, team: 'Adelaide' },
+            { name: 'Jason Castagna', pos: 'HF', era: '2020s', rating: 85, team: 'Richmond' },
+        ];
 
         const RESULTS = [
-            { finish: 'Premiers', emoji: '🏆', minRating: 85, points: 100 },
-            { finish: 'Grand Final', emoji: '🥈', minRating: 80, points: 80 },
-            { finish: 'Preliminary Final', emoji: '🏅', minRating: 75, points: 60 },
-            { finish: 'Semi Final', emoji: '📈', minRating: 70, points: 40 },
-            { finish: 'Elimination Final', emoji: '🎯', minRating: 65, points: 25 },
-            { finish: 'Top 10', emoji: '📊', minRating: 55, points: 10 },
+            { finish: 'Premiers', emoji: '🏆', minRating: 88, points: 100 },
+            { finish: 'Grand Final', emoji: '🥈', minRating: 84, points: 80 },
+            { finish: 'Preliminary Final', emoji: '🏅', minRating: 80, points: 60 },
+            { finish: 'Semi Final', emoji: '📈', minRating: 75, points: 40 },
+            { finish: 'Elimination Final', emoji: '🎯', minRating: 70, points: 25 },
+            { finish: 'Top 10', emoji: '📊', minRating: 60, points: 10 },
             { finish: 'Bottom 8', emoji: '📉', minRating: 0, points: 0 }
         ];
 
@@ -349,6 +577,7 @@
             currentTeam: null,
             season: 1,
             roster: [],
+            usedPlayers: new Set(),
             recruits: [],
             selectedRecruit: null,
             careerHistory: [],
@@ -356,36 +585,87 @@
         };
 
         // Helper Functions
-        function generatePlayer(minRating = 50, maxRating = 95) {
-            const rating = Math.floor(Math.random() * (maxRating - minRating + 1)) + minRating;
-            const age = Math.floor(Math.random() * 15) + 18;
-            return {
-                id: Math.random().toString(36).substr(2, 9),
-                name: `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`,
-                position: POSITIONS[Math.floor(Math.random() * POSITIONS.length)],
-                rating: rating,
-                age: age
-            };
+        function getRandomLegend(position = null) {
+            let pool = LEGENDS.filter(p => !gameState.usedPlayers.has(p.name));
+            if (position) {
+                const posMap = {
+                    'FB': ['FB'],
+                    'HB': ['HB'],
+                    'MID': ['MID'],
+                    'RUC': ['RUC'],
+                    'HF': ['HF'],
+                    'FF': ['FF']
+                };
+                pool = pool.filter(p => posMap[position]?.includes(p.pos) || false);
+            }
+            if (pool.length === 0) pool = LEGENDS; // Reset if all used
+            const legend = pool[Math.floor(Math.random() * pool.length)];
+            return { ...legend, id: Math.random().toString(36).substr(2, 9) };
         }
 
-        function generateRoster() {
+        function generateStartingRoster() {
             const roster = [];
-            // Generate 22 players with varying ratings
-            for (let i = 0; i < 22; i++) {
-                let minR = 55, maxR = 85;
-                if (i < 5) { minR = 75; maxR = 95; } // Top 5 players
-                else if (i < 12) { minR = 65; maxR = 85; } // Mid tier
-                roster.push(generatePlayer(minR, maxR));
+            gameState.usedPlayers.clear();
+
+            // FB Line: 3 players (FB or HB)
+            for (let i = 0; i < 3; i++) {
+                const p = getRandomLegend(i === 1 ? 'FB' : 'HB');
+                p.line = 'FB';
+                roster.push(p);
+                gameState.usedPlayers.add(p.name);
             }
+            // HB Line: 3 players
+            for (let i = 0; i < 3; i++) {
+                const p = getRandomLegend('HB');
+                p.line = 'HB';
+                roster.push(p);
+                gameState.usedPlayers.add(p.name);
+            }
+            // MID Line: 4 players (3 mids + 1 follower)
+            for (let i = 0; i < 4; i++) {
+                const p = getRandomLegend('MID');
+                p.line = 'MID';
+                roster.push(p);
+                gameState.usedPlayers.add(p.name);
+            }
+            // RUC: 1 ruckman
+            const ruck = getRandomLegend('RUC');
+            ruck.line = 'RUC';
+            roster.push(ruck);
+            gameState.usedPlayers.add(ruck.name);
+            // HF Line: 3 players
+            for (let i = 0; i < 3; i++) {
+                const p = getRandomLegend('HF');
+                p.line = 'HF';
+                roster.push(p);
+                gameState.usedPlayers.add(p.name);
+            }
+            // FF Line: 3 players
+            for (let i = 0; i < 3; i++) {
+                const p = getRandomLegend('FF');
+                p.line = 'FF';
+                roster.push(p);
+                gameState.usedPlayers.add(p.name);
+            }
+            // Bench: 4 players (mix)
+            const benchPositions = ['MID', 'MID', 'RUC', 'HF'];
+            benchPositions.forEach(pos => {
+                const p = getRandomLegend(pos);
+                p.line = 'BENCH';
+                roster.push(p);
+                gameState.usedPlayers.add(p.name);
+            });
+
             return roster;
         }
 
         function generateRecruits() {
             const recruits = [];
-            for (let i = 0; i < 5; i++) {
-                // Recruits have wider range - could be stars or busts
-                recruits.push(generatePlayer(45, 92));
-            }
+            const positions = ['FB', 'MID', 'MID', 'RUC', 'FF'];
+            positions.forEach(pos => {
+                const p = getRandomLegend(pos);
+                recruits.push(p);
+            });
             return recruits;
         }
 
@@ -396,17 +676,16 @@
         }
 
         function getRatingClass(rating) {
-            if (rating >= 80) return 'high';
-            if (rating < 60) return 'low';
-            return '';
+            if (rating >= 94) return 'elite';
+            if (rating >= 88) return 'star';
+            return 'good';
         }
 
         function simulateSeason() {
             const teamRating = getTeamRating();
-            const luck = (Math.random() - 0.5) * 20; // -10 to +10 luck factor
+            const luck = (Math.random() - 0.5) * 15;
             const effectiveRating = teamRating + luck;
 
-            // Determine finish based on rating
             let result = RESULTS[RESULTS.length - 1];
             for (const r of RESULTS) {
                 if (effectiveRating >= r.minRating) {
@@ -415,24 +694,21 @@
                 }
             }
 
-            // Calculate wins/losses (22 game season)
-            const winRate = Math.min(0.95, Math.max(0.1, (effectiveRating - 40) / 60));
+            const winRate = Math.min(0.95, Math.max(0.1, (effectiveRating - 50) / 50));
             const wins = Math.round(22 * winRate);
             const losses = 22 - wins;
 
-            // Ladder position based on rating
             let ladder;
-            if (effectiveRating >= 85) ladder = Math.floor(Math.random() * 2) + 1;
-            else if (effectiveRating >= 75) ladder = Math.floor(Math.random() * 4) + 1;
-            else if (effectiveRating >= 65) ladder = Math.floor(Math.random() * 4) + 5;
-            else if (effectiveRating >= 55) ladder = Math.floor(Math.random() * 4) + 9;
+            if (effectiveRating >= 90) ladder = Math.floor(Math.random() * 2) + 1;
+            else if (effectiveRating >= 85) ladder = Math.floor(Math.random() * 4) + 1;
+            else if (effectiveRating >= 75) ladder = Math.floor(Math.random() * 4) + 5;
+            else if (effectiveRating >= 65) ladder = Math.floor(Math.random() * 4) + 9;
             else ladder = Math.floor(Math.random() * 5) + 13;
 
             return { ...result, wins, losses, ladder };
         }
 
         function shouldGetOffers(result) {
-            // Get offers if made finals and random chance
             return result.points >= 25 && Math.random() > 0.4;
         }
 
@@ -445,27 +721,10 @@
                 const randomTeam = availableTeams.splice(Math.floor(Math.random() * availableTeams.length), 1)[0];
                 offers.push({
                     team: randomTeam,
-                    roster: generateRoster()
+                    roster: generateStartingRoster()
                 });
             }
             return offers;
-        }
-
-        function ageRoster() {
-            gameState.roster.forEach(p => {
-                p.age++;
-                // Decline if over 30, random decline chance increases with age
-                if (p.age > 30) {
-                    const declineChance = (p.age - 30) * 0.15;
-                    if (Math.random() < declineChance) {
-                        p.rating = Math.max(40, p.rating - Math.floor(Math.random() * 8 + 3));
-                    }
-                }
-                // Young players can improve
-                else if (p.age < 25 && Math.random() < 0.3) {
-                    p.rating = Math.min(98, p.rating + Math.floor(Math.random() * 5 + 1));
-                }
-            });
         }
 
         // UI Functions
@@ -486,34 +745,43 @@
             grid.addEventListener('click', (e) => {
                 const card = e.target.closest('.team-card');
                 if (!card) return;
-
                 document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
-
-                const teamId = card.dataset.teamId;
-                gameState.currentTeam = TEAMS.find(t => t.id === teamId);
+                gameState.currentTeam = TEAMS.find(t => t.id === card.dataset.teamId);
                 document.getElementById('btn-start').disabled = false;
             });
         }
 
-        function renderRoster(containerId, roster, clickable = false, onClick = null) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = roster.map(p => `
-                <div class="player-card ${clickable ? 'clickable' : ''}" data-player-id="${p.id}">
-                    <div>
-                        <div class="player-name">${p.name}</div>
-                        <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
-                    </div>
-                    <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
+        function createPlayerDot(player, clickable = false) {
+            return `
+                <div class="player-dot ${clickable ? 'clickable' : ''}" data-player-id="${player.id}">
+                    <div class="name">${player.name.split(' ').pop()}</div>
+                    <div class="rating ${getRatingClass(player.rating)}">${player.rating}</div>
+                    <div class="era">${player.era}</div>
                 </div>
-            `).join('');
+            `;
+        }
 
-            if (clickable && onClick) {
-                container.addEventListener('click', (e) => {
-                    const card = e.target.closest('.player-card');
-                    if (card) onClick(card.dataset.playerId);
-                });
-            }
+        function renderField(prefix = '') {
+            const lines = {
+                fb: gameState.roster.filter(p => p.line === 'FB'),
+                hb: gameState.roster.filter(p => p.line === 'HB'),
+                mid: gameState.roster.filter(p => p.line === 'MID'),
+                ruck: gameState.roster.filter(p => p.line === 'RUC'),
+                hf: gameState.roster.filter(p => p.line === 'HF'),
+                ff: gameState.roster.filter(p => p.line === 'FF'),
+                bench: gameState.roster.filter(p => p.line === 'BENCH')
+            };
+
+            const clickable = prefix === 'swap-';
+
+            document.getElementById(`${prefix}fb-row`).innerHTML = `<span class="position-label">FB</span>` + lines.fb.map(p => createPlayerDot(p, clickable)).join('');
+            document.getElementById(`${prefix}hb-row`).innerHTML = `<span class="position-label">HB</span>` + lines.hb.map(p => createPlayerDot(p, clickable)).join('');
+            document.getElementById(`${prefix}mid-row`).innerHTML = `<span class="position-label">MID</span>` + lines.mid.map(p => createPlayerDot(p, clickable)).join('');
+            document.getElementById(`${prefix}ruck-row`).innerHTML = `<span class="position-label">RUC</span>` + lines.ruck.map(p => createPlayerDot(p, clickable)).join('');
+            document.getElementById(`${prefix}hf-row`).innerHTML = `<span class="position-label">HF</span>` + lines.hf.map(p => createPlayerDot(p, clickable)).join('');
+            document.getElementById(`${prefix}ff-row`).innerHTML = `<span class="position-label">FF</span>` + lines.ff.map(p => createPlayerDot(p, clickable)).join('');
+            document.getElementById(`${prefix}bench-row`).innerHTML = lines.bench.map(p => createPlayerDot(p, clickable)).join('');
         }
 
         function startSeason() {
@@ -521,7 +789,7 @@
             document.getElementById('current-team-badge').textContent = gameState.currentTeam.emoji;
             document.getElementById('current-team-name').textContent = gameState.currentTeam.name;
             document.getElementById('team-rating').textContent = getTeamRating();
-            renderRoster('roster-display', gameState.roster);
+            renderField();
             showScreen('screen-season');
         }
 
@@ -534,13 +802,13 @@
             document.getElementById('result-title').textContent = `${result.emoji} ${result.finish}!`;
 
             const descriptions = {
-                'Premiers': 'Your team dominated and claimed the ultimate prize!',
+                'Premiers': 'Your legends dominated and claimed the ultimate prize!',
                 'Grand Final': 'So close! Your team fell at the final hurdle.',
-                'Preliminary Final': 'A strong season ended one game short of the Grand Final.',
-                'Semi Final': 'Made the second week of finals - building momentum.',
-                'Elimination Final': 'Scraped into finals but couldn\'t go further.',
-                'Top 10': 'A middle-of-the-road season. Room to improve.',
-                'Bottom 8': 'A tough season. Time to rebuild.'
+                'Preliminary Final': 'A strong season ended one game short of glory.',
+                'Semi Final': 'Made week two of finals - building momentum.',
+                'Elimination Final': 'Scraped into finals but couldn\'t advance.',
+                'Top 10': 'A middle-of-the-road season. Time to recruit.',
+                'Bottom 8': 'A tough year. Major changes needed.'
             };
             document.getElementById('result-desc').textContent = descriptions[result.finish];
 
@@ -548,7 +816,6 @@
             document.getElementById('stat-losses').textContent = result.losses;
             document.getElementById('stat-ladder').textContent = result.ladder + (result.ladder === 1 ? 'st' : result.ladder === 2 ? 'nd' : result.ladder === 3 ? 'rd' : 'th');
 
-            // Update career history
             gameState.careerHistory.push({
                 season: gameState.season,
                 team: gameState.currentTeam.name,
@@ -562,10 +829,8 @@
             if (result.finish === 'Premiers') gameState.stats.premierships++;
             if (result.points >= 25) gameState.stats.finals++;
 
-            showScreen('screen-result');
-
-            // Store result for later
             gameState.lastResult = result;
+            showScreen('screen-result');
         }
 
         function showOffseason() {
@@ -574,80 +839,68 @@
 
             const recruitsContainer = document.getElementById('recruits-display');
             recruitsContainer.innerHTML = gameState.recruits.map(p => `
-                <div class="player-card recruit clickable" data-player-id="${p.id}">
-                    <div>
-                        <div class="player-name">${p.name}</div>
-                        <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
-                    </div>
-                    <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
+                <div class="recruit-card" data-player-id="${p.id}">
+                    <div class="player-name">${p.name}</div>
+                    <div class="player-details">${p.pos} • ${p.era} • ${p.team}</div>
+                    <div class="player-rating">${p.rating}</div>
                 </div>
             `).join('');
 
             recruitsContainer.onclick = (e) => {
-                const card = e.target.closest('.player-card');
+                const card = e.target.closest('.recruit-card');
                 if (!card) return;
-
-                document.querySelectorAll('#recruits-display .player-card').forEach(c => c.classList.remove('selected-swap'));
-                card.classList.add('selected-swap');
-
+                document.querySelectorAll('.recruit-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
                 gameState.selectedRecruit = gameState.recruits.find(r => r.id === card.dataset.playerId);
-                document.getElementById('swap-info').textContent = `Selected ${gameState.selectedRecruit.name} (${gameState.selectedRecruit.rating}). Now click a player to swap out.`;
+                document.getElementById('swap-info').innerHTML = `Selected <strong>${gameState.selectedRecruit.name}</strong> (${gameState.selectedRecruit.rating}). Click a player on the field to swap.`;
+
+                // Highlight compatible positions
+                document.querySelectorAll('.player-dot').forEach(dot => dot.classList.remove('selected'));
             };
 
-            renderSquadForSwap();
-            showScreen('screen-offseason');
-        }
+            renderField('swap-');
 
-        function renderSquadForSwap() {
-            const container = document.getElementById('squad-swap-display');
-            container.innerHTML = gameState.roster.map(p => `
-                <div class="player-card clickable" data-player-id="${p.id}">
-                    <div>
-                        <div class="player-name">${p.name}</div>
-                        <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
-                    </div>
-                    <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
-                </div>
-            `).join('');
+            // Add click handlers to field players
+            document.querySelectorAll('[id^="swap-"]').forEach(container => {
+                container.onclick = (e) => {
+                    const dot = e.target.closest('.player-dot');
+                    if (!dot || !gameState.selectedRecruit) return;
 
-            container.onclick = (e) => {
-                const card = e.target.closest('.player-card');
-                if (!card || !gameState.selectedRecruit) return;
+                    const playerId = dot.dataset.playerId;
+                    const playerOut = gameState.roster.find(p => p.id === playerId);
+                    if (!playerOut) return;
 
-                const playerOut = gameState.roster.find(p => p.id === card.dataset.playerId);
-                const playerIn = gameState.selectedRecruit;
+                    const playerIn = gameState.selectedRecruit;
+                    playerIn.line = playerOut.line;
 
-                // Perform swap
-                const idx = gameState.roster.findIndex(p => p.id === playerOut.id);
-                gameState.roster[idx] = playerIn;
+                    const idx = gameState.roster.findIndex(p => p.id === playerOut.id);
+                    gameState.roster[idx] = playerIn;
+                    gameState.usedPlayers.add(playerIn.name);
 
-                // Remove from recruits
-                gameState.recruits = gameState.recruits.filter(r => r.id !== playerIn.id);
+                    gameState.recruits = gameState.recruits.filter(r => r.id !== playerIn.id);
 
-                document.getElementById('swap-info').textContent = `✅ Swapped ${playerOut.name} (${playerOut.rating}) → ${playerIn.name} (${playerIn.rating})`;
-                gameState.selectedRecruit = null;
+                    document.getElementById('swap-info').innerHTML = `✅ Swapped <strong>${playerOut.name}</strong> (${playerOut.rating}) → <strong>${playerIn.name}</strong> (${playerIn.rating})`;
+                    gameState.selectedRecruit = null;
 
-                // Re-render both lists
-                renderSquadForSwap();
+                    renderField('swap-');
 
-                const recruitsContainer = document.getElementById('recruits-display');
-                recruitsContainer.innerHTML = gameState.recruits.map(p => `
-                    <div class="player-card recruit clickable" data-player-id="${p.id}">
-                        <div>
+                    recruitsContainer.innerHTML = gameState.recruits.map(p => `
+                        <div class="recruit-card" data-player-id="${p.id}">
                             <div class="player-name">${p.name}</div>
-                            <div style="font-size: 0.8em; color: #888;">${p.position} • Age ${p.age}</div>
+                            <div class="player-details">${p.pos} • ${p.era} • ${p.team}</div>
+                            <div class="player-rating">${p.rating}</div>
                         </div>
-                        <div class="player-rating ${getRatingClass(p.rating)}">${p.rating}</div>
-                    </div>
-                `).join('');
-            };
+                    `).join('');
+                };
+            });
+
+            showScreen('screen-offseason');
         }
 
         function showOffers() {
             const offers = generateOffers();
             const grid = document.getElementById('offers-grid');
 
-            // Add current team as "stay" option in the offers
             grid.innerHTML = offers.map((offer, i) => `
                 <div class="offer-card" data-offer-index="${i}">
                     <div class="team-emoji">${offer.team.emoji}</div>
@@ -663,7 +916,6 @@
                 const idx = parseInt(card.dataset.offerIndex);
                 const offer = offers[idx];
 
-                // Switch teams
                 if (!gameState.stats.teamsCoached.includes(gameState.currentTeam.name)) {
                     gameState.stats.teamsCoached.push(gameState.currentTeam.name);
                 }
@@ -677,14 +929,11 @@
             };
 
             document.getElementById('btn-stay').onclick = () => nextSeason();
-
             showScreen('screen-offers');
         }
 
         function nextSeason() {
             gameState.season++;
-            ageRoster();
-
             if (gameState.season > 20) {
                 showCareerEnd();
             } else {
@@ -726,7 +975,7 @@
 
         // Event Listeners
         document.getElementById('btn-start').onclick = () => {
-            gameState.roster = generateRoster();
+            gameState.roster = generateStartingRoster();
             if (!gameState.stats.teamsCoached.includes(gameState.currentTeam.name)) {
                 gameState.stats.teamsCoached.push(gameState.currentTeam.name);
             }
@@ -738,12 +987,9 @@
             showResult(result);
         };
 
-        document.getElementById('btn-offseason').onclick = () => {
-            showOffseason();
-        };
+        document.getElementById('btn-offseason').onclick = () => showOffseason();
 
         document.getElementById('btn-continue').onclick = () => {
-            // Check if should get coaching offers
             if (shouldGetOffers(gameState.lastResult)) {
                 showOffers();
             } else {
@@ -756,6 +1002,7 @@
                 currentTeam: null,
                 season: 1,
                 roster: [],
+                usedPlayers: new Set(),
                 recruits: [],
                 selectedRecruit: null,
                 careerHistory: [],
