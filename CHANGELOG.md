@@ -1,5 +1,26 @@
 # AFL Coach Career - Changelog
 
+## v4.0.0 - 2026-06-18
+
+### Season Stats Leaders
+
+**New Features:**
+- **Player Stats Tracking** — Every player now accumulates stats across the season: disposals, goals, and Best on Ground (BOG) awards.
+
+- **Season Leaders Display** — At the end of each season, see your top performers:
+  - 🏃 Most Disposals — Total disposals across all games
+  - ⚽ Leading Goalkicker — Most goals kicked
+  - ⭐ Best & Fairest — Most BOG awards (determined by weighted performance each match)
+  - 📊 Avg Disposals — Highest per-game disposal average
+
+- **Improved BOG Selection** — Best on Ground is now determined by weighted stats (disposals × 1.5 + goals × 3) rather than random selection.
+
+- **Match Display Enhancement** — BOG display now shows goals alongside disposals when the player kicked goals.
+
+- **Position-Based Stats** — Forwards (FF/HF) generate more goals while mids generate more disposals, reflecting realistic AFL stat distribution.
+
+---
+
 ## v3.0.0 - 2026-06-11
 
 ### Position Management & Team Preview

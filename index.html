@@ -61,6 +61,7 @@
         .hidden { display: none !important; }
         .screen { animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         /* Season Display */
         .season-header {
@@ -186,6 +187,51 @@
         .stat-value { font-size: 2.5em; color: #f39c12; }
         .stat-label { color: #888; font-size: 0.9em; }
 
+        /* Season Stats Leaders */
+        .season-leaders {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .season-leaders h3 {
+            text-align: center;
+            color: #4ecdc4;
+            margin-bottom: 15px;
+        }
+        .leaders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .leader-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .leader-card .award-name {
+            color: #f1c40f;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .leader-card .player-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .leader-card .stat-detail {
+            color: #4ecdc4;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .leader-card .stat-label-small {
+            color: #888;
+            font-size: 0.75em;
+        }
+
         /* Offers Grid */
         .offers-grid {
             display: grid;
@@ -306,6 +352,115 @@
         .history-item:last-child { border-bottom: none; }
         .history-item.premiership { color: #f1c40f; }
 
+        /* Match Day Screen */
+        .match-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .match-round {
+            font-size: 1.5em;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        .match-record {
+            color: #4ecdc4;
+            font-size: 1.2em;
+        }
+        .match-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: center;
+        }
+        .match-teams {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .match-team {
+            text-align: center;
+        }
+        .match-team-emoji {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .match-team-name {
+            font-size: 1.1em;
+            max-width: 120px;
+        }
+        .match-vs {
+            font-size: 2em;
+            color: #888;
+        }
+        .match-result {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .match-result.win { color: #27ae60; }
+        .match-result.loss { color: #e74c3c; }
+        .match-result.draw { color: #f39c12; }
+        .match-scores {
+            font-size: 1.2em;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .match-best {
+            background: rgba(78,205,196,0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .ladder-snapshot {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+        .ladder-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .ladder-row:last-child { border-bottom: none; }
+        .ladder-row.your-team {
+            background: rgba(243,156,18,0.2);
+            border-radius: 6px;
+        }
+        .ladder-position { width: 30px; color: #888; }
+        .ladder-team { flex: 1; display: flex; align-items: center; gap: 8px; }
+        .ladder-points { width: 50px; text-align: right; color: #4ecdc4; }
+        .finals-bracket {
+            background: linear-gradient(135deg, rgba(241,196,15,0.1), rgba(243,156,18,0.1));
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .finals-title {
+            text-align: center;
+            font-size: 1.5em;
+            color: #f1c40f;
+            margin-bottom: 15px;
+        }
+        .finals-match {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .finals-matchup {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .player-dot { width: 85px; height: 65px; font-size: 0.6em; }
@@ -321,6 +476,8 @@
             <p class="subtitle">Build the ultimate team from 130 years of AFL/VFL legends. 20 seasons. One legacy.</p>
             <div class="team-grid" id="team-grid"></div>
             <button class="btn" id="btn-start" disabled>Start Career</button>
+            <button class="btn btn-secondary" id="btn-continue-save" style="display: none;">Continue Saved Career</button>
+            <p id="save-info" style="text-align: center; color: #888; margin-top: 10px; display: none;"></p>
         </div>
 
         <!-- Season Screen -->
@@ -362,7 +519,53 @@
                 <div class="bench-row" id="bench-row"></div>
             </div>
 
-            <button class="btn" id="btn-sim">Simulate Season</button>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button class="btn" id="btn-sim">Play Season</button>
+                <button class="btn btn-small btn-secondary" id="btn-save-game">💾 Save Game</button>
+            </div>
+        </div>
+
+        <!-- Match Day Screen -->
+        <div id="screen-match" class="screen hidden">
+            <div class="match-header">
+                <div class="match-round" id="match-round">Round 1</div>
+                <div class="match-record" id="match-record">0-0</div>
+            </div>
+
+            <div class="match-card" id="match-card">
+                <div class="match-teams">
+                    <div class="match-team">
+                        <div class="match-team-emoji" id="match-home-emoji">☀️</div>
+                        <div class="match-team-name" id="match-home-name">Gold Coast</div>
+                    </div>
+                    <div class="match-vs">vs</div>
+                    <div class="match-team">
+                        <div class="match-team-emoji" id="match-away-emoji">🦅</div>
+                        <div class="match-team-name" id="match-away-name">West Coast</div>
+                    </div>
+                </div>
+                <div class="match-result hidden" id="match-result">WIN</div>
+                <div class="match-scores hidden" id="match-scores">98 - 72</div>
+                <div class="match-best hidden" id="match-best">
+                    ⭐ Best on Ground: <span id="best-player">Dustin Martin</span> (32 disposals)
+                </div>
+            </div>
+
+            <div class="ladder-snapshot hidden" id="ladder-snapshot">
+                <h4 style="text-align: center; margin-bottom: 10px; color: #888;">Ladder</h4>
+                <div id="ladder-rows"></div>
+            </div>
+
+            <div class="finals-bracket hidden" id="finals-bracket">
+                <div class="finals-title" id="finals-title">Finals Week 1</div>
+                <div id="finals-matches"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" id="btn-play-match">Play Match</button>
+                <button class="btn btn-secondary hidden" id="btn-next-match">Next Round →</button>
+                <button class="btn hidden" id="btn-season-summary">View Season Summary</button>
+            </div>
         </div>
 
         <!-- Result Screen -->
@@ -385,6 +588,12 @@
                     <div class="stat-label">Ladder</div>
                 </div>
             </div>
+
+            <div class="season-leaders" id="season-leaders">
+                <h3>🏅 Season Stat Leaders</h3>
+                <div class="leaders-grid" id="leaders-grid"></div>
+            </div>
+
             <button class="btn" id="btn-offseason">Off-Season</button>
         </div>
 
@@ -650,7 +859,18 @@
             selectedSwapPlayer: null,
             careerHistory: [],
             stats: { premierships: 0, finals: 0, teamsCoached: [] },
-            previewOffer: null
+            previewOffer: null,
+            matchState: {
+                currentRound: 0,
+                wins: 0,
+                losses: 0,
+                draws: 0,
+                matchHistory: [],
+                ladder: [],
+                inFinals: false,
+                finalsWeek: 0
+            },
+            seasonStats: {} // Track player stats per season
         };
 
         // Position Compatibility - which positions a player can play without penalty
@@ -797,6 +1017,520 @@
             else ladder = Math.floor(Math.random() * 5) + 13;
 
             return { ...result, wins, losses, ladder };
+        }
+
+        // Match-by-match simulation
+        function initializeMatchState() {
+            gameState.matchState = {
+                currentRound: 0,
+                wins: 0,
+                losses: 0,
+                draws: 0,
+                matchHistory: [],
+                ladder: generateInitialLadder(),
+                inFinals: false,
+                finalsWeek: 0,
+                finalsPath: []
+            };
+            // Initialize season stats for all players
+            gameState.seasonStats = {};
+            gameState.roster.forEach(player => {
+                gameState.seasonStats[player.id] = {
+                    name: player.name,
+                    pos: player.pos,
+                    disposals: 0,
+                    goals: 0,
+                    bogCount: 0,
+                    games: 0
+                };
+            });
+        }
+
+        function generateInitialLadder() {
+            const ladder = TEAMS.map(team => ({
+                team: team,
+                wins: 0,
+                losses: 0,
+                draws: 0,
+                points: 0,
+                percentage: 100,
+                rating: 70 + Math.floor(Math.random() * 25)
+            }));
+            const playerTeam = ladder.find(t => t.team.id === gameState.currentTeam.id);
+            if (playerTeam) {
+                playerTeam.rating = getTeamRating();
+            }
+            return ladder;
+        }
+
+        function getOpponent(round) {
+            const opponents = TEAMS.filter(t => t.id !== gameState.currentTeam.id);
+            const index = (round - 1) % opponents.length;
+            return opponents[index];
+        }
+
+        function simulateMatch() {
+            const ms = gameState.matchState;
+            ms.currentRound++;
+
+            const opponent = getOpponent(ms.currentRound);
+            const opponentData = ms.ladder.find(t => t.team.id === opponent.id);
+            const playerData = ms.ladder.find(t => t.team.id === gameState.currentTeam.id);
+
+            const playerRating = getTeamRating();
+            const opponentRating = opponentData?.rating || 75;
+
+            const playerLuck = (Math.random() - 0.5) * 20;
+            const opponentLuck = (Math.random() - 0.5) * 20;
+
+            const playerScore = Math.round(60 + (playerRating + playerLuck) * 0.8 + Math.random() * 30);
+            const opponentScore = Math.round(60 + (opponentRating + opponentLuck) * 0.8 + Math.random() * 30);
+
+            let result, resultClass;
+            if (playerScore > opponentScore) {
+                result = 'WIN';
+                resultClass = 'win';
+                ms.wins++;
+                if (playerData) { playerData.wins++; playerData.points += 4; }
+                if (opponentData) { opponentData.losses++; }
+            } else if (playerScore < opponentScore) {
+                result = 'LOSS';
+                resultClass = 'loss';
+                ms.losses++;
+                if (playerData) { playerData.losses++; }
+                if (opponentData) { opponentData.wins++; opponentData.points += 4; }
+            } else {
+                result = 'DRAW';
+                resultClass = 'draw';
+                ms.draws++;
+                if (playerData) { playerData.draws++; playerData.points += 2; }
+                if (opponentData) { opponentData.draws++; opponentData.points += 2; }
+            }
+
+            if (playerData) {
+                playerData.percentage = Math.round(100 + (ms.wins - ms.losses) * 5 + Math.random() * 10);
+            }
+
+            // Generate stats for all players this match
+            const matchPlayerStats = [];
+            gameState.roster.forEach(player => {
+                const baseDisposals = 10 + Math.floor(player.rating / 5);
+                const playerDisposals = baseDisposals + Math.floor(Math.random() * 15);
+                const isForward = ['FF', 'HF'].includes(player.pos);
+                const playerGoals = isForward ? Math.floor(Math.random() * 4) : Math.floor(Math.random() * 2);
+
+                matchPlayerStats.push({
+                    id: player.id,
+                    name: player.name,
+                    disposals: playerDisposals,
+                    goals: playerGoals
+                });
+
+                // Accumulate season stats
+                if (gameState.seasonStats[player.id]) {
+                    gameState.seasonStats[player.id].disposals += playerDisposals;
+                    gameState.seasonStats[player.id].goals += playerGoals;
+                    gameState.seasonStats[player.id].games++;
+                }
+            });
+
+            // Determine BOG based on weighted performance
+            matchPlayerStats.sort((a, b) => (b.disposals * 1.5 + b.goals * 3) - (a.disposals * 1.5 + a.goals * 3));
+            const bestPlayer = matchPlayerStats[0];
+            const disposals = bestPlayer.disposals;
+
+            // Track BOG count
+            if (gameState.seasonStats[bestPlayer.id]) {
+                gameState.seasonStats[bestPlayer.id].bogCount++;
+            }
+
+            const matchData = {
+                round: ms.currentRound,
+                opponent: opponent,
+                playerScore: playerScore,
+                opponentScore: opponentScore,
+                result: result,
+                resultClass: resultClass,
+                bestPlayer: bestPlayer.name,
+                disposals: disposals,
+                goals: bestPlayer.goals,
+                isHome: ms.currentRound % 2 === 1
+            };
+
+            ms.matchHistory.push(matchData);
+            simulateOtherMatches();
+            sortLadder();
+
+            return matchData;
+        }
+
+        function simulateOtherMatches() {
+            const ms = gameState.matchState;
+            ms.ladder.forEach(teamData => {
+                if (teamData.team.id === gameState.currentTeam.id) return;
+                if (Math.random() < 0.5) {
+                    teamData.wins++;
+                    teamData.points += 4;
+                } else {
+                    teamData.losses++;
+                }
+                teamData.percentage = Math.round(90 + Math.random() * 30);
+            });
+        }
+
+        function sortLadder() {
+            gameState.matchState.ladder.sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                return b.percentage - a.percentage;
+            });
+        }
+
+        function getLadderPosition() {
+            const ms = gameState.matchState;
+            return ms.ladder.findIndex(t => t.team.id === gameState.currentTeam.id) + 1;
+        }
+
+        function simulateFinalsMatch(opponentName) {
+            const ms = gameState.matchState;
+            const playerRating = getTeamRating();
+            const opponent = TEAMS.find(t => t.name.includes(opponentName.split(' ')[0])) || TEAMS[Math.floor(Math.random() * TEAMS.length)];
+            const opponentRating = 80 + Math.floor(Math.random() * 15);
+
+            const playerScore = Math.round(70 + playerRating * 0.6 + Math.random() * 40);
+            const opponentScore = Math.round(70 + opponentRating * 0.6 + Math.random() * 40);
+
+            // Generate stats for all players this finals match
+            const matchPlayerStats = [];
+            gameState.roster.forEach(player => {
+                const baseDisposals = 12 + Math.floor(player.rating / 5); // Slightly higher for finals
+                const playerDisposals = baseDisposals + Math.floor(Math.random() * 18);
+                const isForward = ['FF', 'HF'].includes(player.pos);
+                const playerGoals = isForward ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 2);
+
+                matchPlayerStats.push({
+                    id: player.id,
+                    name: player.name,
+                    disposals: playerDisposals,
+                    goals: playerGoals
+                });
+
+                // Accumulate season stats
+                if (gameState.seasonStats[player.id]) {
+                    gameState.seasonStats[player.id].disposals += playerDisposals;
+                    gameState.seasonStats[player.id].goals += playerGoals;
+                    gameState.seasonStats[player.id].games++;
+                }
+            });
+
+            // Determine BOG based on weighted performance
+            matchPlayerStats.sort((a, b) => (b.disposals * 1.5 + b.goals * 3) - (a.disposals * 1.5 + a.goals * 3));
+            const bestPlayer = matchPlayerStats[0];
+            const disposals = bestPlayer.disposals;
+
+            // Track BOG count
+            if (gameState.seasonStats[bestPlayer.id]) {
+                gameState.seasonStats[bestPlayer.id].bogCount++;
+            }
+
+            let result, resultClass;
+            if (playerScore > opponentScore) {
+                result = 'WIN';
+                resultClass = 'win';
+            } else {
+                result = 'LOSS';
+                resultClass = 'loss';
+            }
+
+            return {
+                opponent: opponent,
+                playerScore: playerScore,
+                opponentScore: opponentScore,
+                result: result,
+                resultClass: resultClass,
+                bestPlayer: bestPlayer.name,
+                disposals: disposals,
+                goals: bestPlayer.goals
+            };
+        }
+
+        function startMatchDay() {
+            initializeMatchState();
+            showScreen('screen-match');
+            updateMatchDisplay();
+        }
+
+        function updateMatchDisplay() {
+            const ms = gameState.matchState;
+            const nextRound = ms.currentRound + 1;
+
+            document.getElementById('match-round').textContent = ms.inFinals ?
+                getFinalsWeekName(ms.finalsWeek) : `Round ${nextRound}`;
+            document.getElementById('match-record').textContent = `${ms.wins}-${ms.losses}${ms.draws > 0 ? `-${ms.draws}` : ''}`;
+
+            document.getElementById('match-result').classList.add('hidden');
+            document.getElementById('match-scores').classList.add('hidden');
+            document.getElementById('match-best').classList.add('hidden');
+            document.getElementById('ladder-snapshot').classList.add('hidden');
+            document.getElementById('finals-bracket').classList.add('hidden');
+
+            document.getElementById('btn-play-match').classList.remove('hidden');
+            document.getElementById('btn-next-match').classList.add('hidden');
+            document.getElementById('btn-season-summary').classList.add('hidden');
+
+            if (!ms.inFinals) {
+                const opponent = getOpponent(nextRound);
+                const isHome = nextRound % 2 === 1;
+
+                if (isHome) {
+                    document.getElementById('match-home-emoji').textContent = gameState.currentTeam.emoji;
+                    document.getElementById('match-home-name').textContent = gameState.currentTeam.name;
+                    document.getElementById('match-away-emoji').textContent = opponent.emoji;
+                    document.getElementById('match-away-name').textContent = opponent.name;
+                } else {
+                    document.getElementById('match-home-emoji').textContent = opponent.emoji;
+                    document.getElementById('match-home-name').textContent = opponent.name;
+                    document.getElementById('match-away-emoji').textContent = gameState.currentTeam.emoji;
+                    document.getElementById('match-away-name').textContent = gameState.currentTeam.name;
+                }
+            } else {
+                const finalsOpponent = getFinalsOpponent(ms.finalsWeek, getLadderPosition());
+                document.getElementById('match-home-emoji').textContent = gameState.currentTeam.emoji;
+                document.getElementById('match-home-name').textContent = gameState.currentTeam.name;
+                document.getElementById('match-away-emoji').textContent = finalsOpponent.emoji;
+                document.getElementById('match-away-name').textContent = finalsOpponent.name;
+            }
+        }
+
+        function getFinalsWeekName(week) {
+            const names = ['', 'Qualifying/Elimination Finals', 'Semi Finals', 'Preliminary Finals', 'Grand Final'];
+            return names[week] || 'Finals';
+        }
+
+        function getFinalsOpponent(week, position) {
+            const ms = gameState.matchState;
+            const topTeams = ms.ladder.filter(t => t.team.id !== gameState.currentTeam.id).slice(0, 7);
+            const index = Math.min(week - 1, topTeams.length - 1);
+            return topTeams[index]?.team || TEAMS[0];
+        }
+
+        function playMatch() {
+            const ms = gameState.matchState;
+
+            let matchData;
+            if (ms.inFinals) {
+                const opponent = getFinalsOpponent(ms.finalsWeek, getLadderPosition());
+                matchData = simulateFinalsMatch(opponent.name);
+                ms.finalsPath.push({
+                    week: ms.finalsWeek,
+                    weekName: getFinalsWeekName(ms.finalsWeek),
+                    result: matchData.result,
+                    opponent: opponent.name
+                });
+            } else {
+                matchData = simulateMatch();
+            }
+
+            const resultEl = document.getElementById('match-result');
+            resultEl.textContent = matchData.result;
+            resultEl.className = `match-result ${matchData.resultClass}`;
+            resultEl.classList.remove('hidden');
+
+            document.getElementById('match-scores').textContent =
+                `${matchData.playerScore} - ${matchData.opponentScore}`;
+            document.getElementById('match-scores').classList.remove('hidden');
+
+            const goalText = matchData.goals > 0 ? `, ${matchData.goals} goal${matchData.goals > 1 ? 's' : ''}` : '';
+            document.getElementById('best-player').textContent =
+                `${matchData.bestPlayer} (${matchData.disposals} disposals${goalText})`;
+            document.getElementById('match-best').classList.remove('hidden');
+
+            if (!ms.inFinals && ms.currentRound <= 22) {
+                renderLadderSnapshot();
+                document.getElementById('ladder-snapshot').classList.remove('hidden');
+            }
+
+            document.getElementById('btn-play-match').classList.add('hidden');
+
+            if (ms.inFinals) {
+                handleFinalsResult(matchData.result);
+            } else if (ms.currentRound >= 22) {
+                checkForFinals();
+            } else {
+                document.getElementById('btn-next-match').classList.remove('hidden');
+            }
+        }
+
+        function renderLadderSnapshot() {
+            const ms = gameState.matchState;
+            const topTeams = ms.ladder.slice(0, 8);
+            const playerPosition = getLadderPosition();
+
+            let html = topTeams.map((teamData, idx) => {
+                const isYourTeam = teamData.team.id === gameState.currentTeam.id;
+                return `
+                    <div class="ladder-row ${isYourTeam ? 'your-team' : ''}">
+                        <span class="ladder-position">${idx + 1}</span>
+                        <span class="ladder-team">${teamData.team.emoji} ${teamData.team.name}</span>
+                        <span class="ladder-points">${teamData.points}</span>
+                    </div>
+                `;
+            }).join('');
+
+            if (playerPosition > 8) {
+                const playerData = ms.ladder[playerPosition - 1];
+                html += `<div style="text-align: center; padding: 5px; color: #888;">...</div>`;
+                html += `
+                    <div class="ladder-row your-team">
+                        <span class="ladder-position">${playerPosition}</span>
+                        <span class="ladder-team">${playerData.team.emoji} ${playerData.team.name}</span>
+                        <span class="ladder-points">${playerData.points}</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('ladder-rows').innerHTML = html;
+        }
+
+        function checkForFinals() {
+            const ms = gameState.matchState;
+            const position = getLadderPosition();
+
+            if (position <= 8) {
+                ms.inFinals = true;
+                ms.finalsWeek = 1;
+                document.getElementById('btn-next-match').classList.remove('hidden');
+                document.getElementById('btn-next-match').textContent = 'Enter Finals →';
+            } else {
+                document.getElementById('btn-season-summary').classList.remove('hidden');
+            }
+        }
+
+        function handleFinalsResult(result) {
+            const ms = gameState.matchState;
+            const position = getLadderPosition();
+
+            if (result === 'WIN') {
+                if (ms.finalsWeek >= 4) {
+                    document.getElementById('btn-season-summary').classList.remove('hidden');
+                } else {
+                    ms.finalsWeek++;
+                    document.getElementById('btn-next-match').classList.remove('hidden');
+                    document.getElementById('btn-next-match').textContent =
+                        ms.finalsWeek === 4 ? 'Grand Final →' : 'Next Finals Match →';
+                }
+            } else {
+                if (ms.finalsWeek === 1 && position <= 4) {
+                    ms.finalsWeek = 2;
+                    document.getElementById('btn-next-match').classList.remove('hidden');
+                    document.getElementById('btn-next-match').textContent = 'Semi Final →';
+                } else {
+                    document.getElementById('btn-season-summary').classList.remove('hidden');
+                }
+            }
+        }
+
+        function showSeasonSummary() {
+            const ms = gameState.matchState;
+            const position = getLadderPosition();
+
+            let finishResult;
+            if (ms.finalsPath.length > 0) {
+                const lastFinal = ms.finalsPath[ms.finalsPath.length - 1];
+                if (lastFinal.weekName === 'Grand Final' && lastFinal.result === 'WIN') {
+                    finishResult = { finish: 'Premiers', emoji: '🏆', points: 100 };
+                } else if (lastFinal.weekName === 'Grand Final') {
+                    finishResult = { finish: 'Grand Final', emoji: '🥈', points: 80 };
+                } else if (lastFinal.weekName === 'Preliminary Finals') {
+                    finishResult = { finish: 'Preliminary Final', emoji: '🏅', points: 60 };
+                } else if (lastFinal.weekName === 'Semi Finals') {
+                    finishResult = { finish: 'Semi Final', emoji: '📈', points: 40 };
+                } else {
+                    finishResult = { finish: 'Elimination Final', emoji: '🎯', points: 25 };
+                }
+            } else if (position <= 8) {
+                finishResult = { finish: 'Elimination Final', emoji: '🎯', points: 25 };
+            } else if (position <= 10) {
+                finishResult = { finish: 'Top 10', emoji: '📊', points: 10 };
+            } else {
+                finishResult = { finish: 'Bottom 8', emoji: '📉', points: 0 };
+            }
+
+            const result = {
+                ...finishResult,
+                wins: ms.wins,
+                losses: ms.losses,
+                ladder: position
+            };
+
+            gameState.lastResult = result;
+            showResult(result);
+        }
+
+        function renderSeasonLeaders() {
+            const stats = Object.values(gameState.seasonStats);
+            if (stats.length === 0) {
+                document.getElementById('season-leaders').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('season-leaders').style.display = 'block';
+
+            // Calculate leaders
+            const disposalsLeader = [...stats].sort((a, b) => b.disposals - a.disposals)[0];
+            const goalsLeader = [...stats].sort((a, b) => b.goals - a.goals)[0];
+            const bogLeader = [...stats].sort((a, b) => b.bogCount - a.bogCount)[0];
+            const avgDisposals = [...stats].filter(s => s.games > 0).sort((a, b) =>
+                (b.disposals / b.games) - (a.disposals / a.games)
+            )[0];
+
+            const leadersHtml = [];
+
+            if (disposalsLeader && disposalsLeader.disposals > 0) {
+                leadersHtml.push(`
+                    <div class="leader-card">
+                        <div class="award-name">🏃 Most Disposals</div>
+                        <div class="player-name">${disposalsLeader.name}</div>
+                        <div class="stat-detail">${disposalsLeader.disposals}</div>
+                        <div class="stat-label-small">total disposals</div>
+                    </div>
+                `);
+            }
+
+            if (goalsLeader && goalsLeader.goals > 0) {
+                leadersHtml.push(`
+                    <div class="leader-card">
+                        <div class="award-name">⚽ Leading Goalkicker</div>
+                        <div class="player-name">${goalsLeader.name}</div>
+                        <div class="stat-detail">${goalsLeader.goals}</div>
+                        <div class="stat-label-small">goals</div>
+                    </div>
+                `);
+            }
+
+            if (bogLeader && bogLeader.bogCount > 0) {
+                leadersHtml.push(`
+                    <div class="leader-card">
+                        <div class="award-name">⭐ Best & Fairest</div>
+                        <div class="player-name">${bogLeader.name}</div>
+                        <div class="stat-detail">${bogLeader.bogCount}</div>
+                        <div class="stat-label-small">BOG awards</div>
+                    </div>
+                `);
+            }
+
+            if (avgDisposals && avgDisposals.games > 0) {
+                const avg = Math.round(avgDisposals.disposals / avgDisposals.games);
+                leadersHtml.push(`
+                    <div class="leader-card">
+                        <div class="award-name">📊 Avg Disposals</div>
+                        <div class="player-name">${avgDisposals.name}</div>
+                        <div class="stat-detail">${avg}</div>
+                        <div class="stat-label-small">per game</div>
+                    </div>
+                `);
+            }
+
+            document.getElementById('leaders-grid').innerHTML = leadersHtml.join('');
         }
 
         function shouldGetOffers(result) {
@@ -969,6 +1703,8 @@
             if (result.points >= 25) gameState.stats.finals++;
 
             gameState.lastResult = result;
+            renderSeasonLeaders(); // Show stat leaders
+            saveGame(); // Auto-save after each season
             showScreen('screen-result');
         }
 
@@ -1110,6 +1846,7 @@
                 gameState.stats.teamsCoached.push(offer.team.name);
             }
             document.getElementById('offer-preview-modal').classList.add('hidden');
+            saveGame(); // Auto-save after changing teams
             nextSeason();
         }
 
@@ -1154,6 +1891,108 @@
             showScreen('screen-end');
         }
 
+        // Save/Load Functions
+        const SAVE_KEY = 'afl-coach-career-save';
+
+        function saveGame() {
+            const saveData = {
+                version: 1,
+                timestamp: Date.now(),
+                currentTeam: gameState.currentTeam,
+                season: gameState.season,
+                roster: gameState.roster,
+                usedPlayers: Array.from(gameState.usedPlayers),
+                careerHistory: gameState.careerHistory,
+                stats: gameState.stats,
+                lastResult: gameState.lastResult
+            };
+            localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+            showSaveNotification('Game Saved!');
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem(SAVE_KEY);
+            if (!saved) return false;
+
+            try {
+                const saveData = JSON.parse(saved);
+                gameState.currentTeam = saveData.currentTeam;
+                gameState.season = saveData.season;
+                gameState.roster = saveData.roster;
+                gameState.usedPlayers = new Set(saveData.usedPlayers);
+                gameState.careerHistory = saveData.careerHistory || [];
+                gameState.stats = saveData.stats || { premierships: 0, finals: 0, teamsCoached: [] };
+                gameState.lastResult = saveData.lastResult;
+                gameState.recruits = [];
+                gameState.selectedRecruit = null;
+                gameState.selectedSwapPlayer = null;
+                gameState.previewOffer = null;
+                return true;
+            } catch (e) {
+                console.error('Failed to load save:', e);
+                return false;
+            }
+        }
+
+        function hasSavedGame() {
+            return localStorage.getItem(SAVE_KEY) !== null;
+        }
+
+        function getSaveInfo() {
+            const saved = localStorage.getItem(SAVE_KEY);
+            if (!saved) return null;
+            try {
+                const saveData = JSON.parse(saved);
+                const date = new Date(saveData.timestamp);
+                return {
+                    team: saveData.currentTeam?.name || 'Unknown',
+                    season: saveData.season || 1,
+                    premierships: saveData.stats?.premierships || 0,
+                    date: date.toLocaleDateString()
+                };
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function deleteSave() {
+            localStorage.removeItem(SAVE_KEY);
+        }
+
+        function showSaveNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        }
+
+        function updateSaveUI() {
+            const continueBtn = document.getElementById('btn-continue-save');
+            const saveInfo = document.getElementById('save-info');
+            const info = getSaveInfo();
+
+            if (info) {
+                continueBtn.style.display = 'block';
+                saveInfo.style.display = 'block';
+                saveInfo.innerHTML = `Saved: ${info.team} • Season ${info.season} • ${info.premierships} 🏆 • ${info.date}`;
+            } else {
+                continueBtn.style.display = 'none';
+                saveInfo.style.display = 'none';
+            }
+        }
+
         // Event Listeners
         document.getElementById('btn-start').onclick = () => {
             gameState.roster = generateStartingRoster();
@@ -1164,8 +2003,19 @@
         };
 
         document.getElementById('btn-sim').onclick = () => {
-            const result = simulateSeason();
-            showResult(result);
+            startMatchDay();
+        };
+
+        document.getElementById('btn-play-match').onclick = () => {
+            playMatch();
+        };
+
+        document.getElementById('btn-next-match').onclick = () => {
+            updateMatchDisplay();
+        };
+
+        document.getElementById('btn-season-summary').onclick = () => {
+            showSeasonSummary();
         };
 
         document.getElementById('btn-offseason').onclick = () => showOffseason();
@@ -1189,10 +2039,22 @@
                 selectedSwapPlayer: null,
                 careerHistory: [],
                 stats: { premierships: 0, finals: 0, teamsCoached: [] },
-                previewOffer: null
+                previewOffer: null,
+                matchState: {
+                    currentRound: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
+                    matchHistory: [],
+                    ladder: [],
+                    inFinals: false,
+                    finalsWeek: 0
+                }
             };
+            deleteSave(); // Clear save when starting fresh
             document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('btn-start').disabled = true;
+            updateSaveUI();
             showScreen('screen-title');
         };
 
@@ -1209,8 +2071,21 @@
             }
         };
 
+        // Save/Load event listeners
+        document.getElementById('btn-save-game').onclick = () => {
+            saveGame();
+        };
+
+        document.getElementById('btn-continue-save').onclick = () => {
+            if (loadGame()) {
+                startSeason();
+                showSaveNotification('Career Loaded!');
+            }
+        };
+
         // Initialize
         renderTeamSelection();
+        updateSaveUI();
     </script>
 </body>
 </html>
