@@ -1,5 +1,75 @@
 # AFL Coach Career - Changelog
 
+## v6.0.0 - 2026-06-22
+
+### In-Season Trading System
+
+**New Features:**
+- **Trade Button** — New "🔄 Trade Players" button on the season screen allows you to make trades before playing the season.
+
+- **Trade Modal** — Full trade interface with:
+  - Your Players column (sorted by rating) on the left
+  - Available Players column (15-20 legends in the trade pool) on the right
+  - Click a player from each side to select a trade
+
+- **Trade Evaluation** — Trades are evaluated based on player value (rating + age):
+  - 🟢 "Great trade!" — You're getting the better player (+5 value or more)
+  - 🟡 "Fair trade" — Both sides benefit roughly equally (-3 to +5 value)
+  - 🔴 "Giving up too much" — You're losing value (-4 or worse)
+  
+- **Limited Trades** — 2 trades per season to prevent roster churning. Counter displayed on season screen.
+
+- **Trade Pool Persistence** — Trade pool saves with your game. Players you trade away become available for future trades.
+
+- **Mid-Season Stats** — Traded-in players get their season stats initialized so they contribute to season leaders.
+
+**How It Works:**
+1. Click "🔄 Trade Players" on the season screen
+2. Select a player from your roster to trade away
+3. Select a player from the available pool to acquire
+4. Review the trade evaluation
+5. Click "Confirm Trade" to execute
+6. New player takes the position of the traded player
+
+---
+
+## v5.0.0 - 2026-06-21
+
+### Player Aging & Retirement System
+
+**New Features:**
+- **Player Ages** — Every player now has an age displayed on their card. Ages are assigned based on era:
+  - 2020s players: 20-28 years old
+  - 2010s players: 26-32 years old
+  - 2000s players: 28-36 years old
+  - 1990s players: 30-38 years old
+  - 1980s legends: 32-40 years old
+
+- **Age-Based Decline** — Players age each off-season and may decline:
+  - Players under 30 maintain their rating
+  - At 30+, 30% chance of -1 rating per year
+  - At 33+, 60% chance of -1 to -2 rating decline
+  - At 35+, decline can be -1 to -3 rating
+  - Minimum rating is 70
+
+- **Retirement System** — Veterans may retire during the off-season:
+  - No retirement before age 32
+  - 10% base chance at 32, increasing 10% each year
+  - +15% extra chance if rating drops below 80
+  - Players 38+ always retire
+  - Retired players are automatically replaced with new recruits
+
+- **Visual Age Indicators**:
+  - Normal text: Under 31
+  - Orange text: Veterans (31-33)
+  - Red text: Old guard (34+)
+
+- **Retirement Notifications** — Off-season screen now shows which players retired and their final stats
+
+- **Dynasty Building** — Forces you to continually refresh your roster, making long careers more challenging and rewarding
+
+---
+
 ## v4.0.0 - 2026-06-18
 
 ### Season Stats Leaders
