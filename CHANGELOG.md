@@ -1,5 +1,28 @@
 # AFL Coach Career - Changelog
 
+## v6.1.0 - 2026-06-24
+
+### Auto-Arrange Lineup
+
+**New Features:**
+- **Auto-Arrange Button** — New "⚡ Auto-Arrange" button on the season screen that instantly optimizes your lineup.
+
+- **Smart Optimization** — One click does what would take minutes manually:
+  - Puts your highest-rated players in each position on the field
+  - Moves lower-rated players to the bench
+  - Ensures natural position compatibility (FBs play FB, MIDs play MID, etc.)
+  - No more wasting a 95-rated mid on the bench while an 85 plays
+
+- **Notification Feedback** — Shows "Lineup optimized!" confirmation when complete.
+
+**How It Works:**
+1. Click "⚡ Auto-Arrange" on the season screen
+2. The game sorts players by natural position and rating
+3. Best players fill field spots, rest go to bench
+4. Your team rating may improve as position penalties are eliminated
+
+---
+
 ## v6.0.0 - 2026-06-22
 
 ### In-Season Trading System

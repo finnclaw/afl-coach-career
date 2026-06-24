@@ -644,6 +644,7 @@
 
             <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                 <button class="btn" id="btn-sim">Play Season</button>
+                <button class="btn btn-small btn-secondary" id="btn-auto-arrange">⚡ Auto-Arrange</button>
                 <button class="btn btn-small btn-secondary" id="btn-trade">🔄 Trade Players</button>
                 <button class="btn btn-small btn-secondary" id="btn-save-game">💾 Save Game</button>
             </div>
@@ -2434,6 +2435,71 @@
             showScreen('screen-end');
         }
 
+        // Auto-Arrange Function
+        function autoArrangeRoster() {
+            // Group players by their natural position
+            const byPosition = {
+                'FB': [],
+                'HB': [],
+                'MID': [],
+                'RUC': [],
+                'HF': [],
+                'FF': []
+            };
+
+            gameState.roster.forEach(player => {
+                byPosition[player.pos].push(player);
+            });
+
+            // Sort each position group by rating (highest first)
+            Object.keys(byPosition).forEach(pos => {
+                byPosition[pos].sort((a, b) => b.rating - a.rating);
+            });
+
+            // Structure: FB(3), HB(3), MID(4), RUC(1), HF(3), FF(3) = 17 field + 4 bench
+            const fieldStructure = {
+                'FB': 3,
+                'HB': 3,
+                'MID': 4,
+                'RUC': 1,
+                'HF': 3,
+                'FF': 3
+            };
+
+            const newRoster = [];
+            const benchPlayers = [];
+
+            // Fill field positions with best players from each position group
+            Object.keys(fieldStructure).forEach(pos => {
+                const needed = fieldStructure[pos];
+                const available = byPosition[pos];
+
+                for (let i = 0; i < needed; i++) {
+                    if (available[i]) {
+                        available[i].line = pos;
+                        newRoster.push(available[i]);
+                    }
+                }
+
+                // Remaining players go to bench consideration
+                for (let i = needed; i < available.length; i++) {
+                    benchPlayers.push(available[i]);
+                }
+            });
+
+            // Sort bench candidates by rating and take top 4
+            benchPlayers.sort((a, b) => b.rating - a.rating);
+            const actualBench = benchPlayers.slice(0, 4);
+            actualBench.forEach(p => {
+                p.line = 'BENCH';
+                newRoster.push(p);
+            });
+
+            gameState.roster = newRoster;
+            renderField();
+            showSaveNotification('Lineup optimized!');
+        }
+
         // Save/Load Functions
         const SAVE_KEY = 'afl-coach-career-save';
 
@@ -2652,6 +2718,11 @@
 
         document.getElementById('trade-confirm').onclick = () => {
             executeTrade();
+        };
+
+        // Auto-arrange button
+        document.getElementById('btn-auto-arrange').onclick = () => {
+            autoArrangeRoster();
         };
 
         // Save/Load event listeners
