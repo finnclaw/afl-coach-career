@@ -1,5 +1,31 @@
 # AFL Coach Career - Changelog
 
+## v7.0.0 - 2026-06-25
+
+### Ladder-Based Draft System
+
+**New Features:**
+- **Draft Order** — Your draft pick is now determined by your ladder position. Finish last = pick first. Win the premiership = pick last. Just like real AFL!
+
+- **Draft Pick Display** — Off-season screen shows your draft position with contextual messages:
+  - 🎯 "Top 4 pick! First crack at the best talent." (picks 1-4)
+  - "Mid-first round. Solid options available." (picks 5-8)
+  - "Late pick. Best players already taken." (picks 9-14)
+  - 😬 "Last picks. Slim pickings this year." (picks 15-18)
+
+- **Other Teams Draft** — Before your pick, other teams select from the pool in order. You can see which players were already taken ("Already picked: Gary Ablett Jr (98), Marcus Bontempelli (97)...")
+
+- **Strategic Consequence** — Bad seasons now have a silver lining: better access to elite talent. Creates meaningful trade-offs between winning now vs rebuilding.
+
+**How It Works:**
+1. Your ladder position at season end determines draft order (18th = pick 1, 1st = pick 18)
+2. A pool of ~29 legends is generated for the draft
+3. AI teams pick before you based on your position
+4. You choose from the remaining top 5 players
+5. Higher picks = better average player ratings available
+
+---
+
 ## v6.1.0 - 2026-06-24
 
 ### Auto-Arrange Lineup

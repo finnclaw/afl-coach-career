@@ -736,9 +736,9 @@
                 <div id="retirements-list" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
             </div>
 
-            <h3 style="text-align: center; margin-bottom: 10px; color: #4ecdc4;">🔄 Recruiting</h3>
+            <h3 style="text-align: center; margin-bottom: 10px; color: #4ecdc4;">📋 AFL Draft</h3>
             <p style="text-align: center; color: #888; margin-bottom: 20px;">
-                5 legends want to join your club. Click a recruit, then click one of your players on the field to swap.
+                Your draft pick is based on ladder position — finish lower, pick higher! Click a recruit, then click one of your players on the field to swap.
             </p>
 
             <div class="recruit-panel">
@@ -2069,6 +2069,45 @@
             showScreen('screen-result');
         }
 
+        function generateDraftPool() {
+            // Generate a larger pool of potential recruits for the draft
+            // Pool needs to be big enough that even pick 18 has options
+            const pool = [];
+            const positionCounts = {
+                'FB': 4, 'HB': 5, 'MID': 8, 'RUC': 3, 'HF': 5, 'FF': 4
+            };
+
+            Object.keys(positionCounts).forEach(pos => {
+                for (let i = 0; i < positionCounts[pos]; i++) {
+                    const player = getRandomLegend(pos);
+                    if (!pool.find(p => p.name === player.name)) {
+                        pool.push(player);
+                    }
+                }
+            });
+
+            // Sort by rating (best players first)
+            return pool.sort((a, b) => b.rating - a.rating);
+        }
+
+        function getDraftPosition() {
+            // Draft position based on ladder - worse teams pick first
+            const ladderPos = getLadderPosition();
+            // Invert: 18th on ladder = 1st draft pick, 1st on ladder = 18th draft pick
+            return 19 - ladderPos;
+        }
+
+        function simulateOtherDraftPicks(draftPool, yourPick) {
+            // Other teams pick before you (picks 1 to yourPick-1)
+            const picked = [];
+            for (let i = 1; i < yourPick && draftPool.length > 0; i++) {
+                // AI teams pick the best available player
+                const bestPlayer = draftPool.shift();
+                picked.push({ pick: i, player: bestPlayer });
+            }
+            return picked;
+        }
+
         function showOffseason() {
             // Clear all injuries at end of season
             clearSeasonInjuries();
@@ -2077,7 +2116,17 @@
             const retirements = processRetirements();
             gameState.retirements = retirements;
 
-            gameState.recruits = generateRecruits();
+            // Calculate draft position based on ladder
+            const draftPosition = getDraftPosition();
+            gameState.draftPosition = draftPosition;
+
+            // Generate draft pool and simulate other teams' picks
+            const fullDraftPool = generateDraftPool();
+            const otherPicks = simulateOtherDraftPicks(fullDraftPool, draftPosition);
+            gameState.otherDraftPicks = otherPicks;
+
+            // Remaining players are available for you
+            gameState.recruits = fullDraftPool.slice(0, 5); // Top 5 remaining
             gameState.selectedRecruit = null;
 
             // Display retirements if any
@@ -2096,7 +2145,26 @@
             }
 
             const recruitsContainer = document.getElementById('recruits-display');
-            recruitsContainer.innerHTML = gameState.recruits.map(p => `
+
+            // Show draft position info
+            const draftInfoHtml = `
+                <div style="text-align: center; margin-bottom: 20px; padding: 15px; background: rgba(243,156,18,0.1); border-radius: 12px; border-left: 4px solid #f39c12;">
+                    <div style="font-size: 1.3em; color: #f39c12; margin-bottom: 5px;">📋 Draft Pick #${draftPosition}</div>
+                    <div style="color: #888; font-size: 0.9em;">
+                        ${draftPosition <= 4 ? '🎯 Top 4 pick! First crack at the best talent.' :
+                          draftPosition <= 8 ? 'Mid-first round. Solid options available.' :
+                          draftPosition <= 14 ? 'Late pick. Best players already taken.' :
+                          '😬 Last picks. Slim pickings this year.'}
+                    </div>
+                    ${otherPicks.length > 0 ? `
+                        <div style="margin-top: 10px; font-size: 0.8em; color: #666;">
+                            Already picked: ${otherPicks.slice(-3).map(p => `${p.player.name} (${p.player.rating})`).join(', ')}${otherPicks.length > 3 ? '...' : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            recruitsContainer.innerHTML = draftInfoHtml + gameState.recruits.map(p => `
                 <div class="recruit-card" data-player-id="${p.id}">
                     <div class="player-name">${p.name}</div>
                     <div class="player-details">${p.pos} • Age ${p.age} • ${p.team}</div>
